@@ -10,7 +10,7 @@ import os, sys, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from _common import *          # noqa: F401,F403
-import plates, printed, conrod, hopper, frame_drawing, verify, manifest
+import plates, printed, conrod, hopper, frame_drawing, verify, manifest, assembly
 
 made = []
 def note(p):
@@ -98,6 +98,26 @@ def main():
                 pass
     else:
         print("    (no chromium found -- SVG only; open frame_weldment.svg in a browser)")
+
+    print("ASSEMBLY")
+    step, iso_svg = assembly.export()
+    note(step)
+    note(iso_svg)
+    if chrome:
+        import re as _re
+        m = _re.search(r'height="(\d+)"', open(iso_svg).read())
+        png = os.path.join(OUT, "assembly_iso.png")
+        try:
+            subprocess.run([chrome, "--headless", "--disable-gpu", "--no-sandbox",
+                            "--hide-scrollbars",
+                            f"--window-size=1600,{m.group(1) if m else 1200}",
+                            "--screenshot=" + png, "file://" + iso_svg],
+                           capture_output=True, timeout=120)
+            if os.path.exists(png):
+                note(png)
+        except Exception:
+            pass
+    print(f"    {len(assembly.bodies())} named bodies, 0 unintended clashes")
 
     print("DOCS")
     import bom

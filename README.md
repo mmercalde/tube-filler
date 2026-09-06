@@ -1,8 +1,12 @@
 # TUBE-FILLER
 
 A small progressive-cavity grout pump built around a purchased German **D6-3**
-rotor/stator set, to fill twelve 3" x 6 m steel posts with sand/cement grout
-through a 1" hose and a 1" NPT port at each post base.
+rotor/stator set, to fill twelve **3 x 3 square PTR** posts, 6 m tall, with
+sand/cement grout through a 1" hose and a 1" NPT port at each post base.
+
+> The posts are **square PTR**. The pump barrel is **round tube**. They are two
+> separate purchases that happen to share a nominal 3", and `params.py` keeps
+> them in separate blocks with no cross-reference. Measure both.
 
 Buildable with a chop saw, a drill press, a stick or MIG welder, hand tools and
 a Bambu H2C. **No lathe, no mill** — every hole in this design is drilled,
@@ -46,10 +50,14 @@ tube-filler/
     manifest.py          the print registry: drives BOTH the STL export and
                          out/print_manifest.md, so they cannot disagree
     verify.py            geometry self-checks; nothing exports if one fails
+    assembly.py          places every component at its params station; emits the
+                         STEP assembly and the iso view, and runs the clash check
     jigs.py              printed fab templates (drill saddles, weld fixtures)
     ops.py               printed operational parts (cradle, screens, caps)
     _common.py  plates.py  printed.py  conrod.py  hopper.py  frame_drawing.py
   out/                 EVERYTHING GENERATED: STEP, STL, DXF, SVG, PDF
+    machine_assembly.step  the whole machine, one named body per component
+    assembly_iso.png       hidden-line isometric of the same
     print_manifest.md    28 models / 56 parts: material, walls, infill,
                          orientation, consumable vs one-time jig
   BOM.md               generated
@@ -60,8 +68,10 @@ tube-filler/
 To regenerate everything after changing a measured input:
 
 ```bash
-python calcs/pump_calcs.py      # sanity + the design summary
-python cad/build_all.py         # every STL / DXF / STEP / drawing / BOM.md
+make                  # everything
+make calcs            # design summary + acceptance asserts
+make assembly         # machine_assembly.step + assembly_iso.svg only
+make clash            # interpenetration report, nothing exported
 ```
 
 or just `make`. `cad/build_all.py` also re-runs the calcs into
@@ -93,30 +103,46 @@ geometry around it is right, the number is a guess. Measure, edit, re-run.
 | `rotor_joint`, `rotor_pin_dia`, `rotor_pin_eye_width` | Calipers on the rotor's drive head. If it is a *drill* head (a hex stub) rather than a *pin* head, see §5.3. |
 | `rotor_free_len` | How far the rotor protrudes from the stator at the drive end. Sets how far into the barrel the con-rod reaches. |
 | **`rotor_eccentricity`** | Two ways, both hand-tool: **(a)** lay the rotor in a V-block (two lengths of angle iron work), put a dial indicator on top, turn one full revolution: **TIR = 2e**, so `e = TIR/2`. **(b)** Caliper the stator bore at an end: it is a slot of width *d* and length *d + 4e*, so `e = (long axis − short axis)/4`. Do both; they should agree within 0.3 mm. |
-| `barrel_od`, `barrel_wall` | Calipers on the owner's actual 3" tube. "cal-11" is nominally 3.05 mm; measure it. **This one changes the post volume and therefore the cement order** — see §3. |
+| `barrel_od`, `barrel_wall` | Calipers on the owner's actual round tube for the **pump barrel**. Sets the barrel bore, the auger, the hopper slot and the barrel jigs. **Nothing about the posts depends on it.** |
+| **`post_shape`, `post_side`, `post_wall`** | The twelve **posts**: square PTR, measured across the flats. **This is what sets the post volume and therefore the cement order** — see §3a. Separate stock from the barrel; do not assume they measure the same. |
 | **`drill_body_dia`** | Calipers on the round gearcase section just behind the chuck collar, at its widest. Sets the printed cradle. |
 | `drill_body_len`, `drill_chuck_depth`, `drill_chuck_body_len`, `drill_aux_offset` | Tape and calipers on the drill. These four place the cradle and the torque lug along the machine axis; get them wrong and the chuck is not coaxial with the stub. `verify.py` checks the result lands on the pump axis. |
 | `drill_aux_handle_dia` | The auxiliary-handle collar. The steel torque lug is cut half-round to it. |
 | `drill_T_cont`, `drill_T_burst` | The drill's continuous and burst torque at 250 rpm. Nameplate figures are optimistic; if you can, measure. |
 | `post_port_height`, `post_vent_from_top` | Where the 1" port and the vent go on each post. The printed post jigs are built from these, so 24 holes come off two prints. |
-| `post_od`, `barrel_od` | Every saddle jig parametrizes on these. A tube that measures 75.4 instead of 76.2 costs one reprint, not a scrapped hole. |
+| `post_side` (or `post_od` if round) | The post jigs parametrize on this. Stock that measures 75.4 instead of 76.2 costs one reprint, not a scrapped hole. Setting `post_shape` switches both post jigs between a corner channel and a V-saddle. |
 | `bucket_rim_od` | Your 5-gal bucket. Sets the sand-screen frame. |
 | `printer_x/y/z` | Your H2C build volume. `verify.py` refuses to emit a part that will not fit. |
 
 ---
 
-## 3a. A number in the brief that does not survive measurement
+## 3a. Square posts, and what that does to the cement order
 
-The brief assumes ~27 L per post. A 76.2 mm OD tube with a 3.05 mm wall has a
-70.1 mm bore, which over 6 m holds **23.2 L**, not 27. Twelve posts is
-**278 L**, not 324.
+The posts are 3 x 3 square PTR, not round tube. A square bore of the same
+nominal size holds **27% more**:
 
-That is not a design problem — it is a *purchasing* problem. `calcs` prints the
-correct figure from `post_od` / `post_wall` and flags the discrepancy. **Measure
-the post wall before you order cement.** If the tube turns out to be cal-14
-(1.9 mm) the bore is 72.4 mm and the job is 297 L. Ordering to the brief's 27 L
-figure means ~1 spare sack of cement, which is cheap; ordering to 23.2 L when
-the tube is thin-wall means stopping mid-post, which is not.
+| | bore area | per post | x 12 |
+|---|--:|--:|--:|
+| square PTR, 76.2 across flats, 3.05 wall | 70.1 x 70.1 = 4914 mm² | **29.5 L** | **354 L** |
+| round tube, 76.2 OD, 3.05 wall | ø70.1 = 3859 mm² | 23.2 L | 278 L |
+| the brief's assumption | — | ~27 L | 324 L |
+
+So the job is **354 L**, not the brief's 324 and certainly not the 278 you would
+get by assuming round tube — a 76 L swing, which is about a sack and a half of
+cement. `calcs` section 1 prints the correct figure from `post_shape`,
+`post_side` and `post_wall`, flags the difference against the brief, and
+section 10 sizes the cement, sand and water from it.
+
+**Measure the wall before you order cement.** Under-ordering stops you
+mid-post, and a post you stopped filling is a post you have to chase with a
+hand pump.
+
+Two things square PTR makes *easier*, worth knowing before you cut:
+
+- the 1" NPT half coupling welds to a **flat face** — no saddle cut, no
+  fish-mouth, and a hole saw that will not skate;
+- two adjacent flat faces locate a jig completely, which is why the post jigs
+  are now L-section corner channels rather than V-blocks (§5.0).
 
 ---
 
@@ -165,7 +191,7 @@ Hopper → barrel → feed auger → adapter plate → stator → discharge head
 → hose → post.
 
 - **Hopper** (44 L, wall angles 69° and 71°) feeds down through a
-  200 × 50 slot into the top of the barrel. One hopper load is 1.9 posts.
+  200 × 50 slot into the top of the barrel. One hopper load is 1.5 posts.
 - **Barrel**: 600 mm of the owner's 3" tube. The drive shaft enters the rear
   through a **packed gland** — greased graphite rope in a steel stuffing box,
   with a lantern ring fed by a grease nipple. Not a lip seal. Lip seals die in
@@ -223,6 +249,11 @@ in that file. In particular:
   the three 1:1 flange templates before you touch the barrel or the plate.
 - `jig_post_port` / `jig_post_vent` before you touch the twelve posts — two
   prints, 24 holes, all at the same height without reading a tape 24 times.
+  On square PTR these are **L-section corner channels**: they register on two
+  adjacent faces, which locates a square section completely. A V-block cannot —
+  a vee on a flat face touches two arbitrary lines and rocks. Each jig has the
+  bushing centred on the face it drills and a datum leg to the post end, so the
+  distance from the end to the hole is the jig, not a tape measure.
 - `fixture_ptr_corner` / `fixture_ptr_tee` before frame day. **Both are
   sacrificial**: they tack, then they come off. Weld out with one fitted and
   you melt it into the joint.
@@ -273,12 +304,20 @@ barrel, not the frame, is the alignment datum for the whole machine.
    **rear** one takes the rearward thrust.
 7. Hex stub: cross-pin the 1-1/4" pipe sleeve to the shaft rear, plug-weld the
    1/2" hex bar. Check it runs true — spin the shaft and watch the hex.
-8. Drill station: weld the braced upright, then the torque lug (half-round to
-   the *measured* aux-handle collar) to its front face, then the cradle plate on
-   the outrigger. Bolt the printed saddle to the plate through its slots, sit
-   the drill in, chuck it on the stub, and shim the saddle until the drill runs
-   without side load on the stub. **Weld both drill braces** — unbraced, the
-   upright sags 2.4 mm under the 1160 N torque reaction and the drill cocks.
+8. Drill station: weld the braced upright, then **one 10 mm bracket** on top of
+   it — a half-round torque lug at its front edge, cut to the *measured*
+   aux-handle collar, and a flat behind it for the printed saddle. One plate,
+   two jobs; the lug is the only torque path. Bolt the printed saddle down
+   through its slots, sit the drill in, chuck it on the stub, and shim until
+   the drill runs with no side load on the stub. **Weld both drill braces** —
+   unbraced, the upright sags 2.4 mm under the 1160 N torque reaction and the
+   drill cocks off the stub axis.
+
+   The saddle is only as long as the drill body behind the collar
+   (`drill_body_len − drill_aux_offset`), which on a typical spade drill is
+   about 46 mm. Sizing it at 130 put it straight through the torque lug — the
+   assembly clash check caught that, and `cradle_plate_l` now follows the
+   measured drill.
 
 **If your rotor has a *drill* head (hex) instead of a pin head:** you still
 need the 2-DOF articulation. Do not chuck a hex socket straight to the shaft.
@@ -473,6 +512,39 @@ tells you what to do about each.
 Also worth feeding back: `grout_tau0` (from the pressure the gauge actually
 shows on the first post), and `auger_fill_eta` (from whether the pump surges).
 
+
+---
+
+## 10a. The assembly model, and the five things it caught
+
+`cad/assembly.py` places every component at its `params.py` station — reusing
+the same builders that produce the STLs and DXFs, never remodelling — and emits
+`out/machine_assembly.step` with one named body per component plus
+`out/assembly_iso.png`. The drill is in there too, as an envelope cylinder off
+the measured drill dimensions, so the clearances you read are the real ones.
+
+`verify.py` then intersects **every pair of bodies** and fails the build on any
+shared volume that is not on `assembly.INTENDED_FITS` — a short, explicit list
+(shaft-in-sleeve, auger-on-shaft, stator-on-cradle, fork-on-tongue, chuck-on-
+stub, and the welded stacks). Run it alone with `make clash`.
+
+Placing the parts is what proved the layout, and it was not clean:
+
+| what the clash check found | why it mattered |
+|---|---|
+| The shaft nose sat 200 mm inside the space the con-rod needs. | `x_auger_front` was a hard-coded −30. The rotor position is set by the stator and nothing else can move, so the chain now runs **forwards** from the rotor: tip → pin → con-rod → tongue → shaft nose → auger. The auger is 371 mm, not 520, and the shaft got 200 mm shorter — which incidentally cut the unsupported overhang from 770 mm to 558 and the deflection from 1.90 mm to 0.68. |
+| The stator cradle sat straight through two tie-rod spacers, and the strap through the other two. | Only ~3.5 mm of web fits between the stator and a spacer. Both parts now have closed circular channels at the spacer stations; the spacers slide out axially with the stator at washout, so a closed channel costs nothing. |
+| The hex stub's 42 mm sleeve was inside the rear pillow block housing. | The shaft rear moved to −1000 and the blocks to −790 / −900. |
+| The printed drill saddle ran straight through the steel torque lug. | There is only `drill_body_len − drill_aux_offset` of drill body behind the collar. The saddle is now sized from that, and lug and saddle share one welded bracket. |
+| The stator strap duplicated the cradle's lower half. | It was modelled as a full arch from −r to +r. It now caps only the upper half, and prints valley-up so it needs no supports; the assembly flips it. |
+
+Two smaller ones: the hex stub's weld plug sits *beyond* the shaft end, so the
+chuck face is a plug thickness further back than `hex_free_len` alone implies;
+and the top rails were set from the barrel OD when the **stator** is the fat
+part — they were 6 mm inside it. Both are now derived.
+
+None of these would have shown up in a part-by-part review. All five showed up
+the first time the parts were put in the same coordinate system.
 
 ---
 

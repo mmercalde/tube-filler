@@ -7,7 +7,7 @@ follower shoulder that fouled the box rim, a throat collar 30 mm too tall, and
 a strap with no arch over the stator.  Measure the model, don't trust the code.
 """
 from _common import *
-import plates, printed, conrod, hopper, manifest
+import plates, printed, conrod, hopper, manifest, jigs, assembly, assembly
 
 SPLIT = {"auger_pin_drill_jig", "joint_boot_clamp"}   # deliberately two-piece
 
@@ -100,6 +100,46 @@ def check():
     want(P.x_hex_back < P.x_shaft_rear,
          "hex stub does not project rearward of the shaft")
 
+    # --- post jigs must match the post SHAPE, and the posts are not the barrel
+    want(P.post_shape in ("square", "round"),
+         f"post_shape {P.post_shape!r} is neither 'square' nor 'round'")
+    if P.post_shape == "square":
+        want(abs(P.post_area_mm2 - P.post_id ** 2) < 1e-6,
+             "square post bore area is not side^2")
+    else:
+        want(abs(P.post_area_mm2 - 3.141592653589793 / 4 * P.post_id ** 2) < 1e-6,
+             "round post bore area is not pi/4 d^2")
+    # Both shapes share one convention: foot contact face at x = -datum,
+    # bushing at x = 0, body ending at x = +45.  So one check covers both.
+    for nm, jf, datum in (("port", jigs.jig_post_port, P.post_port_height),
+                          ("vent", jigs.jig_post_vent, P.post_vent_from_top)):
+        bb = jf()[0].bounding_box()
+        want(abs(bb.size.X - (datum + 14 + 45)) < 1.5,
+             f"post {nm} jig is {bb.size.X:.0f} long; datum leg should make it "
+             f"{datum + 59:.0f}, so the bushing is exactly {datum:.0f} from the "
+             f"post end")
+        want(abs(bb.min.X + datum + 14) < 1.5,
+             f"post {nm} jig foot is not at x = -{datum + 14:.0f}")
+        want(bb.min.Z > -0.01,
+             f"post {nm} jig sits below the bed plane -- it will not slice as modelled")
+
+    if P.post_shape == "square":
+        # The jig must clear the post everywhere along the post's own length.
+        # If it does not, it simply will not go on -- and you find out with a
+        # 6 m post on trestles and a drill in your hand.
+        S = P.post_side
+        for nm, datum, hole, scr in (
+                ("port", P.post_port_height, 6.4, P.post_port_hole),
+                ("vent", P.post_vent_from_top, P.post_vent_dia, None)):
+            u = jigs._post_jig_square(datum, hole, "FIT", scribe_d=scr,
+                                      oriented=False)[0]
+            post = Pos(-datum + 400, 0, 0) * Box(800, S, S)
+            hit = u & post                      # None == no intersection at all
+            clash = hit.volume if hit is not None else 0.0
+            want(clash < 50.0,
+                 f"post {nm} jig fouls the post envelope by {clash:.0f} mm3 -- "
+                 f"it will not slide on")
+
     # --- layout sanity
     want(P.x_auger_front < P.x_adapter_back,
          f"auger front x={P.x_auger_front:.0f} is not behind the adapter plate "
@@ -110,6 +150,24 @@ def check():
          "dead annulus in front of the gland that the flush cannot reach")
     want(P.conrod_len >= 20 * P.rotor_eccentricity,
          "con-rod too short for the rotor eccentricity")
+    # --- THE ASSEMBLY: no two bodies may share volume unless the fit is
+    # intended and named.  This is the check that found the shaft nose sitting
+    # 200 mm inside the con-rod's space, the stator cradle straddling the tie
+    # rods, the hex stub inside the rear pillow block, and the strap
+    # duplicating the cradle's lower half.
+    for n1, n2, v in assembly.clashes():
+        fails.append(f"assembly: {n1} and {n2} interpenetrate by {v:.0f} mm3 "
+                     f"-- not an intended fit")
+
+    # --- THE ASSEMBLY: no two bodies may share volume unless the fit is
+    # intended and named in assembly.INTENDED_FITS.  This is the check that
+    # found the shaft nose sitting 200 mm inside the con-rod's space, the
+    # stator cradle straddling the tie rods, the hex stub inside the rear
+    # pillow block, and the strap duplicating the cradle's lower half.
+    for n1, n2, v in assembly.clashes():
+        fails.append(f"assembly: {n1} and {n2} interpenetrate by {v:.0f} mm3 "
+                     f"-- not an intended fit")
+
     return fails
 
 

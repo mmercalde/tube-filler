@@ -5,8 +5,11 @@ runs, none is in the pressure path, and the weld fixtures are explicitly
 sacrificial and embossed to say so -- PETG within 20 mm of an arc is gone.
 
 All saddle jigs parametrize on the MEASURED tube diameters (`barrel_od` for the
-machine, `post_od` for the twelve posts), so a tube that measures 75.4 instead
-of 76.2 costs one reprint, not a scrapped hole.
+machine, `post_side` / `post_od` for the twelve posts), so stock that measures
+75.4 instead of 76.2 costs one reprint, not a scrapped hole.
+
+The barrel and the posts are DIFFERENT STOCK -- round tube and square PTR --
+and nothing here derives one from the other.
 
 Conventions:
   * tube axis along +X;
@@ -190,20 +193,96 @@ def jig_barrel_end_ring(bc, hole_d, label, diagonal=True):
 # ===========================================================================
 # J3 / J4  post jigs -- used 12 and 12 times, so they earn their print time
 # ===========================================================================
-def _post_jig(leg_len, hole_d, label, scribe_d=None, boss_h=20.0):
-    """One strapped V-saddle with an integral leg to the tube END.  The end
-    stop is the datum: the whole point is that all twelve posts get their port
-    at the same height without anyone reading a tape twelve times."""
+def _post_jig_square(leg_len, hole_d, label, scribe_d=None, pad_t=26.0,
+                     oriented=True):
+    """CORNER-CHANNEL jig for SQUARE PTR posts.
+
+    An L-section that registers on two adjacent faces of the post.  Two flat
+    faces locate a square section completely -- one plane sets height and
+    rotation, the perpendicular plane sets sideways -- which a V-block cannot
+    do on a square, because a vee sitting on a flat face is only touching two
+    arbitrary lines and will rock and wander.
+
+    The bushing is centred on the face it drills through.  On square PTR the
+    port and vent land on a FLAT face, so the 1\" half coupling needs no saddle
+    cut and the drill has nothing to skate off -- both jobs are easier than
+    they were on round tube.
+
+    Modelled in use coordinates (post axis +X, section centred on the axis),
+    then rotated 135 degrees so it prints standing on its outer corner: both
+    legs at 45 degrees, no overhang anywhere, and no supports.
+    """
+    S, t, Lb = P.post_side, 12.0, 48.0
+    zc = S / 2 + CLEAR                      # register plane on the top face
+    yc = S / 2 + CLEAR                      # register plane on the side face
+    bx = 45.0                               # body half-length along the post
+    y_out = -(S / 2 + 10.0)
+
+    def Lsec(x0, x1, th=t):
+        """L cross-section swept from x0 to x1."""
+        a = Pos((x0 + x1) / 2, (y_out + yc + th) / 2, zc + th / 2) * Box(
+            x1 - x0, (yc + th) - y_out, th)
+        b = Pos((x0 + x1) / 2, yc + th / 2, (zc + th + zc - Lb) / 2) * Box(
+            x1 - x0, th, (zc + th) - (zc - Lb))
+        return a + b
+
+    body = Lsec(-bx, bx)
+    body += Lsec(-leg_len, -bx)                      # datum leg to the post end
+
+    # solid end stop: an L-band across the post END face.  Two perpendicular
+    # strips of contact -- a square butt, not a point.
+    band = 22.0
+    foot_env = Pos(-leg_len - 7, (y_out + yc + t) / 2, (zc + t + zc - Lb) / 2) * Box(
+        14, (yc + t) - y_out, (zc + t) - (zc - Lb))
+    keep_top = Pos(-leg_len - 7, 0, (zc + t + zc - band) / 2) * Box(
+        14, 400, (zc + t) - (zc - band))
+    keep_side = Pos(-leg_len - 7, (yc + t + yc - band) / 2, 0) * Box(
+        14, (yc + t) - (yc - band), 400)
+    body += foot_env & (keep_top + keep_side)
+
+    # bushing pad, centred on the face
+    body += Pos(0, 0, zc + pad_t / 2) * Box(70, 46, pad_t)
+    body -= Pos(0, 0, zc - 10) * extrude(Circle(hole_d / 2 + 0.15), amount=pad_t + 20)
+    if scribe_d:
+        body -= Pos(0, 0, zc + pad_t - 1.2) * (
+            extrude(Circle(scribe_d / 2 + 0.6), amount=2)
+            - extrude(Circle(scribe_d / 2 - 0.6), amount=2))
+
+    # strap slots: a nylon strap through leg A and leg B wraps the other two faces
+    for sx in (-1, 1):
+        body -= Pos(sx * 30, y_out + 13, zc - 1) * Box(STRAP_W, 6.0, t + 2)
+        body -= Pos(sx * 30, yc + t / 2, zc - Lb + 13) * Box(STRAP_W, t + 2, 6.0)
+
+    body += _emboss(label, 5.0, 0, -(S / 2 - 4), zc + t)
+    body += _emboss(f"{P.post_side:.1f} SQ PTR", 4.5, 0, -(S / 2 - 4) - 11, zc + t)
+
+    if not oriented:
+        return (body.clean(),)      # USE coordinates, for the fit check
+    # print orientation: stand it on the outer corner, both legs at 45 deg
+    body = Rot(-135, 0, 0) * body
+    bb = body.bounding_box()
+    body = Pos(0, 0, -bb.min.Z) * body
+    # small flat at the knife-edge corner so it sticks to the bed
+    body -= Pos(0, 0, -1) * Box(1000, 1000, 1.6,
+                                align=(Align.CENTER, Align.CENTER, Align.MIN))
+    body = Pos(0, 0, -0.6) * body
+    return (body.clean(),)
+
+
+def _post_jig_round(datum, hole_d, label, scribe_d=None, boss_h=20.0):
+    """Strapped V-saddle, for the round-tube case (post_shape == \"round\").
+
+    Same convention as the square version: the foot's contact face sits at
+    x = -datum and the bushing at x = 0, so the datum distance IS
+    post_port_height / post_vent_from_top with no arithmetic in between."""
     L = 90.0
     S = Saddle(P.post_od, L, label=label)
     up = S.upper
-    # leg + solid end stop, hanging off the saddle at the vee-mouth level
     leg_h = 16.0
-    leg = Pos(-L / 2 - leg_len / 2 + 8, 0, 0) * Box(
-        leg_len + 16, S.w - 2 * EAR, leg_h, align=(Align.CENTER, Align.CENTER, Align.MIN))
-    foot = Pos(-L / 2 - leg_len - 2, 0, 0) * Box(
-        16, S.w - 2 * EAR, S.R + S.d + 6, align=(Align.CENTER, Align.CENTER, Align.MIN))
-    up = up + leg + foot
+    up += Pos(-datum, 0, 0) * Box(datum - L / 2 + 8, S.w - 2 * EAR, leg_h,
+                                  align=(Align.MIN, Align.CENTER, Align.MIN))
+    up += Pos(-datum - 14, 0, 0) * Box(14, S.w - 2 * EAR, S.R + S.d + 6,
+                                       align=(Align.MIN, Align.CENTER, Align.MIN))
     up += Pos(0, 0, S.hu - 1) * extrude(Circle(hole_d / 2 + 6), amount=boss_h + 1)
     up -= Pos(0, 0, S.axis_upper + S.R - 8) * extrude(
         Circle(hole_d / 2 + 0.15), amount=boss_h + 60)
@@ -214,18 +293,32 @@ def _post_jig(leg_len, hole_d, label, scribe_d=None, boss_h=20.0):
     return (up.clean(),)
 
 
+def _post_jig(*a, **kw):
+    """Dispatch on the MEASURED post shape.  Square PTR gets a corner channel;
+    round tube gets a V-saddle.  Setting post_shape switches both jigs."""
+    if P.post_shape == "square":
+        return _post_jig_square(*a, **kw)
+    kw.pop("pad_t", None)
+    return _post_jig_round(*a, **kw)
+
+
 def jig_post_port():
     """1\" NPT port, centre at post_port_height above the BASE.  The bushing
     guides the hole saw's 6 mm pilot; the scribed ring on top is the finished
-    hole diameter to check against."""
-    return _post_jig(P.post_port_height - 45.0, 6.4, "PORT FROM BASE",
+    hole diameter to check against.
+
+    The datum leg runs to the post BASE, so all twelve ports land at the same
+    height without anyone reading a tape twelve times."""
+    return _post_jig(P.post_port_height, 6.4,
+                     f"PORT {P.post_port_height:.0f} FROM BASE",
                      scribe_d=P.post_port_hole)
 
 
 def jig_post_vent():
     """Vent below the post TOP.  Same saddle, shorter leg, and you drill the
     12 mm straight through the bushing -- no pilot."""
-    return _post_jig(P.post_vent_from_top - 45.0, P.post_vent_dia, "VENT FROM TOP")
+    return _post_jig(P.post_vent_from_top, P.post_vent_dia,
+                     f"VENT {P.post_vent_from_top:.0f} FROM TOP")
 
 
 # ===========================================================================

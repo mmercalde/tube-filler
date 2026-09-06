@@ -30,9 +30,15 @@ def row(label, value, note=""):
 # ============================================================================
 # 1. THE JOB
 # ============================================================================
-post_id_m   = P.post_id * mm
-post_area   = pi / 4 * post_id_m ** 2
-post_vol_L  = post_area * (P.post_height * mm) * 1000
+# Post bore switches on post_shape.  The twelve posts are SQUARE PTR; the pump
+# barrel is round tube and is separate stock -- do not cross-reference them.
+post_area   = P.post_area_mm2 * 1e-6                    # m2
+post_vol_L  = P.post_vol_L
+SQ          = P.post_shape == "square"
+post_desc   = (f"{P.post_side:.1f} sq PTR x {P.post_wall:.2f} wall"
+               if SQ else f"{P.post_od:.1f} OD tube x {P.post_wall:.2f} wall")
+bore_desc   = (f"{P.post_id:.1f} x {P.post_id:.1f} bore"
+               if SQ else f"{P.post_id:.1f} dia bore")
 job_vol_L   = post_vol_L * P.n_posts
 hose_vol_L  = pi / 4 * (P.hose_id * mm) ** 2 * (P.hose_len * mm) * 1000
 rho         = P.grout_sg * 1000
@@ -203,16 +209,26 @@ def main():
     print("=" * 78)
 
     rule("1  THE JOB")
+    row(f"post bore ({P.post_shape})", bore_desc,
+        f"{post_desc} x {P.post_height/1000:.0f} m")
     row("post internal volume", f"{post_vol_L:.1f} L",
-        f"({P.post_od:.0f} OD x {P.post_wall:.2f} wall x {P.post_height/1000:.0f} m)")
+        "= side^2 x length" if SQ else "= pi/4 d^2 x length")
     row("x 12 posts", f"{job_vol_L:.0f} L")
     row("+ hose hold-up", f"{hose_vol_L:.1f} L", f"({P.hose_len/1000:.0f} m of 1\")")
     row("grout to mix (10% waste)", f"{grout_needed:.0f} L")
     if abs(post_vol_L - 27.0) > 1.5:
-        print(f"  ! The brief assumed ~27 L/post.  {P.post_od:.1f} x {P.post_wall:.2f} x "
-              f"{P.post_height/1000:.0f} m holds {post_vol_L:.1f} L.")
-        print(f"    Re-measure the post wall before ordering cement; at cal-11 the job is"
-              f" {job_vol_L:.0f} L, not {27*P.n_posts:.0f} L.")
+        more = post_vol_L > 27.0
+        print(f"  ! The brief assumed ~27 L/post.  {post_desc} holds {post_vol_L:.1f} L "
+              f"-- {'MORE' if more else 'less'}, not less." if more else
+              f"  ! The brief assumed ~27 L/post.  {post_desc} holds {post_vol_L:.1f} L.")
+        print(f"    The job is {job_vol_L:.0f} L, not {27*P.n_posts:.0f} L"
+              f" -- a difference of {abs(job_vol_L - 27*P.n_posts):.0f} L"
+              f" ({abs(cement_kg - 600*27*P.n_posts/1000):.0f} kg of cement).")
+        if SQ:
+            print(f"    Square PTR is the reason: a {P.post_side:.1f} square bore is "
+                  f"{post_area*1e6:.0f} mm2 against {pi/4*P.post_id**2:.0f} mm2 for round")
+            print( "    tube of the same nominal size -- 27% more, and it all has to be")
+            print( "    mixed.  Under-ordering cement stops you mid-post.")
 
     rule("2  PUMP SPEED AND FLOW")
     row("drive", f"{P.drill_power_w:.0f} W drill",
@@ -355,7 +371,7 @@ def main():
     print("  over-crushing is what kills a PC stator (bore closes, torque spikes, burns).")
 
     rule("8  DRIVE SHAFT DEFLECTION  (why the shaft is 35 mm)")
-    row("unsupported overhang", f"{L_ovh*1000:.0f} mm", "front pillow block -> rotor joint")
+    row("unsupported overhang", f"{L_ovh*1000:.0f} mm", "front pillow block -> con-rod pin")
     row("deflection, self weight", f"{d_w*1000:.2f} mm")
     row(f"deflection, {F_side:.0f} N side load", f"{d_F*1000:.2f} mm")
     row("TOTAL", f"{d_tot:.2f} mm")
@@ -402,7 +418,10 @@ def main():
     print(f"    The {p_static:.2f} bar column in the post will drive the rotor backwards and")
     print( "    drain itself into the hopper, and you will not see it happen.")
 
-    rule("10  MATERIALS FOR THE POUR")
+    rule(f"10  MATERIALS FOR THE POUR  ({P.n_posts} x {P.post_shape} posts)")
+    row("bore area per post", f"{post_area*1e6:.0f} mm2",
+        f"{bore_desc} ({P.post_shape})")
+    row("volume per post", f"{post_vol_L:.2f} L")
     row("grout to mix", f"{grout_needed:.0f} L", "1:2 cement:sand, w/c 0.50")
     row("cement", f"{cement_kg:.0f} kg", f"= {sacks:.1f} sacks of 50 kg")
     row("sand (sieved <= 3 mm)", f"{sand_kg:.0f} kg")

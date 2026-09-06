@@ -22,18 +22,18 @@ On the machine, in contact with grout. Existing parts, unchanged by the drill co
 
 | STL | Qty | Mat | Walls | Infill | Orientation | Life | Solid cm3 | Est. g ea |
 |---|--:|---|--:|--:|---|---|--:|--:|
-| `auger_segment_p65.stl` | 4 | PETG | 4 | 100% | axis vertical, flat face down | consumable | 105 | 133 |
-| `auger_scavenger_p65_L65.stl` | 1 | PETG | 4 | 100% | axis vertical | consumable | 61 | 78 |
-| `auger_segment_p84_SPARE.stl` | 4 | PETG | 4 | 100% | axis vertical | spare | 101 | 128 |
+| `auger_segment_p74.stl` | 2 | PETG | 4 | 100% | axis vertical, flat face down | consumable | 114 | 145 |
+| `auger_scavenger_p74_L74.stl` | 1 | PETG | 4 | 100% | axis vertical | consumable | 66 | 84 |
+| `auger_segment_p124_SPARE.stl` | 2 | PETG | 4 | 100% | axis vertical | spare | 108 | 137 |
 | `gland_follower.stl` | 3 | PETG | 4 | 100% | shoulder down | consumable | 45 | 57 |
 | `lantern_ring.stl` | 3 | PETG | 4 | 100% | flat | consumable | 16 | 20 |
-| `stator_cradle.stl` | 1 | ASA | 4 | 40% | saddle up, flat base down | permanent | 1024 | 531 |
-| `stator_strap.stl` | 1 | ASA | 4 | 40% | arch up as modelled | permanent | 559 | 313 |
+| `stator_cradle.stl` | 1 | ASA | 4 | 40% | saddle up, flat base down | permanent | 841 | 468 |
+| `stator_strap.stl` | 1 | ASA | 4 | 40% | arch up as modelled | permanent | 397 | 231 |
 | `joint_boot_clamp.stl` | 2 | PETG | 3 | 40% | flat | permanent | 8 | 9 |
 
-- **auger_segment_p65** -- flight self-supports: 97% layer overlap. No supports.
-- **auger_scavenger_p65_L65** -- sweeps the annulus in front of the gland
-- **auger_segment_p84_SPARE** -- coarser pitch. Print only if the primary auger starves.
+- **auger_segment_p74** -- flight self-supports: 97% layer overlap. No supports.
+- **auger_scavenger_p74_L74** -- sweeps the annulus in front of the gland
+- **auger_segment_p124_SPARE** -- coarser pitch. Print only if the primary auger starves.
 - **gland_follower** -- compression only, fully supported in the bore
 - **lantern_ring** -- grease distribution; not a seal
 - **stator_cradle** -- non-structural alignment only
@@ -50,8 +50,8 @@ One-time shop tools. None of these is on the finished machine.
 | `jig_barrel_hopper_slot.stl` | 1 | PETG | 3 | 15% | vee mouth down, as modelled | one-time jig | 1973 | 650 |
 | `jig_barrel_rear_flange.stl` | 1 | PETG | 3 | 20% | flat disc down | one-time jig | 166 | 115 |
 | `jig_barrel_tie_rods.stl` | 1 | PETG | 3 | 20% | flat disc down | one-time jig | 177 | 123 |
-| `jig_post_port.stl` | 1 | PETG | 3 | 15% | vee mouth down | one-time jig | 1048 | 384 |
-| `jig_post_vent.stl` | 1 | PETG | 3 | 15% | vee mouth down | one-time jig | 950 | 348 |
+| `jig_post_port.stl` | 1 | PETG | 3 | 15% | outer corner down, both legs at 45 deg | one-time jig | 441 | 194 |
+| `jig_post_vent.stl` | 1 | PETG | 3 | 15% | outer corner down, both legs at 45 deg | one-time jig | 351 | 155 |
 | `template_adapter_plate.stl` | 1 | PETG | 3 | 20% | flat, bushings up | one-time jig | 78 | 73 |
 | `template_discharge_flange.stl` | 1 | PETG | 3 | 20% | flat, bushings up | one-time jig | 77 | 73 |
 | `template_barrel_rear_flange.stl` | 1 | PETG | 3 | 20% | flat, bushings up | one-time jig | 78 | 74 |
@@ -62,8 +62,8 @@ One-time shop tools. None of these is on the finished machine.
 - **jig_barrel_hopper_slot** -- strapped V-saddle. Chain-drill 6.4 through every bushing.
 - **jig_barrel_rear_flange** -- registers on the barrel OD; bolt circle concentric with the tube
 - **jig_barrel_tie_rods** -- same, for the adapter-plate tie-rod circle
-- **jig_post_port** -- used 12 times. Foot butts the post BASE; port at 150 mm.
-- **jig_post_vent** -- used 12 times. Foot butts the post TOP; vent 100 mm down.
+- **jig_post_port** -- corner channel on two adjacent faces of the square PTR. Used 12 times. Foot butts the post BASE; port centred on the face at 150 mm.
+- **jig_post_vent** -- corner channel on two adjacent faces of the square PTR. Used 12 times. Foot butts the post TOP; vent 100 mm down.
 - **template_adapter_plate** -- 1:1. Outline is also the cut mark.
 - **template_discharge_flange** -- 1:1
 - **template_barrel_rear_flange** -- 1:1
@@ -78,8 +78,8 @@ On the machine, not wetted.
 
 | STL | Qty | Mat | Walls | Infill | Orientation | Life | Solid cm3 | Est. g ea |
 |---|--:|---|--:|--:|---|---|--:|--:|
-| `drill_cradle_saddle.stl` | 1 | ASA | 5 | 60% | foot down, cradle up | permanent | 694 | 519 |
-| `drill_cradle_strap.stl` | 1 | ASA | 5 | 60% | as modelled, teardrop bore down | permanent | 626 | 462 |
+| `drill_cradle_saddle.stl` | 1 | ASA | 5 | 60% | foot down, cradle up | permanent | 242 | 189 |
+| `drill_cradle_strap.stl` | 1 | ASA | 5 | 60% | as modelled, teardrop bore down | permanent | 220 | 169 |
 | `hopper_guard_tile.stl` | 4 | ASA | 4 | 30% | flat | permanent | 216 | 194 |
 | `sand_screen_frame.stl` | 1 | ASA | 4 | 30% | lip down | permanent | 335 | 280 |
 | `sand_screen_retainer.stl` | 1 | ASA | 4 | 30% | flat | permanent | 119 | 103 |
@@ -101,11 +101,11 @@ On the machine, not wetted.
 
 ## Totals
 
-- **56 printed parts** in 28 distinct models.
-- Estimated filament: **8.2 kg** (at the listed infills; 'Est. g' is density x perimeter shell volume plus infill fraction of the remainder -- a budgeting number, not a slicer).
-- PETG **4.7 kg**, ASA **3.4 kg**.  Buy 6 kg and 4 kg: the auger set alone is a consumable you will reprint, and one
+- **52 printed parts** in 28 distinct models.
+- Estimated filament: **6.6 kg** (at the listed infills; 'Est. g' is density x perimeter shell volume plus infill fraction of the remainder -- a budgeting number, not a slicer).
+- PETG **3.9 kg**, ASA **2.7 kg**.  Buy 5 kg and 4 kg: the auger set alone is a consumable you will reprint, and one
   of the sacrificial weld fixtures will get too close to an arc.
-- Of that, **2.9 kg is one-time fab jigs** that do not stay on the machine.  That is the price of
+- Of that, **2.5 kg is one-time fab jigs** that do not stay on the machine.  That is the price of
   drilling 24 post holes and a hopper slot right the first time.
 
 ## Print order

@@ -51,12 +51,18 @@ def _reg():
        lambda: jigs.jig_barrel_end_ring(P.tie_bc, P.tie_rod_hole, "TIE RODS"), 1,
        J, "PETG", 3, 20, "flat disc down", "one-time jig",
        "same, for the adapter-plate tie-rod circle"))
+    _sq = P.post_shape == "square"
+    _po = ("outer corner down, both legs at 45 deg" if _sq else "vee mouth down")
+    _pk = ("corner channel on two adjacent faces of the square PTR"
+           if _sq else "V-saddle on the round tube")
     a(("jig_post_port", lambda: jigs.jig_post_port()[0], 1, J, "PETG", 3, 15,
-       "vee mouth down", "one-time jig",
-       f"used 12 times. Foot butts the post BASE; port at {P.post_port_height:.0f} mm."))
+       _po, "one-time jig",
+       f"{_pk}. Used 12 times. Foot butts the post BASE; port centred on the "
+       f"face at {P.post_port_height:.0f} mm."))
     a(("jig_post_vent", lambda: jigs.jig_post_vent()[0], 1, J, "PETG", 3, 15,
-       "vee mouth down", "one-time jig",
-       f"used 12 times. Foot butts the post TOP; vent {P.post_vent_from_top:.0f} mm down."))
+       _po, "one-time jig",
+       f"{_pk}. Used 12 times. Foot butts the post TOP; vent "
+       f"{P.post_vent_from_top:.0f} mm down."))
     a(("template_adapter_plate", jigs.template_adapter_plate, 1, J, "PETG", 3, 20,
        "flat, bushings up", "one-time jig", "1:1. Outline is also the cut mark."))
     a(("template_discharge_flange", jigs.template_discharge_rear, 1, J, "PETG", 3, 20,

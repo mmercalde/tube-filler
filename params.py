@@ -38,6 +38,7 @@ rotor_pin_dia        = 12.0    # mm  TBD  cross-pin diameter at the rotor head
 rotor_pin_eye_width  = 22.0    # mm  TBD  width of the rotor's eye/tongue
 rotor_hex_af         = 19.0    # mm  TBD  across-flats, only if "drill_hex"
 rotor_free_len       = 90.0    # mm  TBD  rotor sticking out of the stator, drive end
+rotor_pin_inset      = 20.0    # mm  TBD  pin centre back from the rotor's rear tip
 rotor_eccentricity   = 4.5     # mm  TBD  = (stator minor bore - rotor dia)/2 ... see
                                #          README "measuring eccentricity"
 
@@ -70,7 +71,9 @@ drill_aux_offset     = 60.0    # mm  TBD  gearcase nose to aux-handle collar MEA
 
 # --- Rear hex stub: the primary input ---------------------------------------
 hex_af               = 12.7    # mm  1/2" A/F.  13 mm also fits a 1/2" chuck.
-hex_free_len         = 70.0    # mm  chuck grip + standoff to the stub sleeve
+hex_free_len         = 70.0    # mm  chuck grip + standoff to the plug
+hex_plug_t           = 10.0    # mm  weld plug between the sleeve and the hex bar
+hex_sleeve_len       = 60.0    # mm  1-1/4" pipe sleeve gripping the shaft
 hex_pin_dia          = 8.0     # mm  cross pin, stub sleeve to drive shaft
 
 # --- UPGRADE PATH -- documented, NOT fitted, NOT in the BOM total -----------
@@ -87,8 +90,15 @@ up_gearbox_eff       = 0.86
 up_gearbox_out_shaft = 25.0
 
 # --- Duty -------------------------------------------------------------------
-post_od              = 76.2    # mm  the 12 posts are the same 3" stock
-post_wall            = 3.05    # mm
+# --- THE TWELVE POSTS.  SQUARE PTR.  Separate stock from the pump barrel. ---
+# These are 3 x 3 square PTR, NOT round tube, and NOT the same stock as the
+# pump barrel.  Nothing below may be derived from barrel_od / barrel_wall and
+# nothing in the barrel block may be derived from these.  They are two
+# different purchases that happen to share a nominal 3".
+post_shape           = "square"  #   "square" (PTR) or "round" (tube)
+post_side            = 76.2    # mm  TBD  square: outside across the flats  MEASURE
+post_od              = 76.2    # mm  TBD  round only; ignored when square   MEASURE
+post_wall            = 3.05    # mm  TBD  cal-11 nominal 3.05               MEASURE
 post_height          = 6000.0  # mm
 n_posts              = 12
 grout_sg             = 2.1
@@ -123,7 +133,21 @@ drive_margin_min     = 1.30    # x    on CONTINUOUS torque.  Not 2.0: a hand
 # =============================================================================
 
 barrel_id   = barrel_od - 2 * barrel_wall          # 70.1
-post_id     = post_od - 2 * post_wall
+# --- post bore, by shape ----------------------------------------------------
+post_across = post_side if post_shape == "square" else post_od
+post_id     = post_across - 2 * post_wall          # square: side; round: dia
+
+
+def post_bore_area_mm2():
+    """Square PTR bores are ~27% bigger than the round tube of the same nominal
+    size, and the whole cement order rides on that difference."""
+    if post_shape == "square":
+        return post_id ** 2
+    return pi / 4 * post_id ** 2
+
+
+post_area_mm2 = post_bore_area_mm2()
+post_vol_L    = post_area_mm2 * post_height / 1e6
 
 # --- tie-rod / clamp circle -------------------------------------------------
 tie_rod_m       = 10.0                              # M10 threaded rod
@@ -190,7 +214,7 @@ gland_box_id    = 62.7
 gland_box_len   = 95.0
 sleeve_od       = 42.2          # 1-1/4" sch40 pipe, ID 35.05 -> slides on the shaft
 sleeve_id       = 35.05         # SACRIFICIAL: the packing wears this, not the shaft
-sleeve_len      = 130.0
+sleeve_len      = 110.0
 packing_sq      = 10.0          # (62.7-42.2)/2 = 10.25 -> 10 mm square packing
 packing_rings   = 4
 lantern_len     = 12.0
@@ -198,7 +222,18 @@ follower_len    = 20.0
 gland_plate_t   = 12.0
 gland_stud_m    = 10.0
 gland_stud_span = 96.0
-x_gland_back    = x_cover_back - gland_box_len      # -725
+x_gland_back    = x_cover_back - gland_box_len      # rear mouth of the box
+
+# --- packing stack, from the cover face rearward ----------------------------
+# order out from the machine: ring, ring, LANTERN, ring, ring, follower, plate
+follower_shoulder_t = 6.0
+x_lantern_deep  = x_cover_back - 2 * packing_sq
+x_follower_deep = x_lantern_deep - lantern_len - 2 * packing_sq
+x_gland_plate   = (x_follower_deep - follower_len - follower_shoulder_t
+                   - gland_plate_t)
+x_sleeve_front  = x_cover_back + 10.0
+x_sleeve_back   = x_sleeve_front - sleeve_len
+x_stator_cradle = 134.0         # on the front top cross member
 
 # --- hopper -----------------------------------------------------------------
 hop_top_l       = 520.0         # along the barrel axis
@@ -226,8 +261,30 @@ hop_slant_short = sqrt(hop_depth**2 + ((hop_top_l - hop_bot_l) / 2)**2)
 hop_ang_long    = degrees(atan2(hop_depth, (hop_top_w - hop_bot_w) / 2))
 hop_ang_short   = degrees(atan2(hop_depth, (hop_top_l - hop_bot_l) / 2))
 
+# --- con-rod (rotor articulation) -------------------------------------------
+conrod_len      = 140.0         # PIN TO PIN
+conrod_bar      = 32.0
+conrod_fork_t   = 8.0
+conrod_ear_len  = 45.0
+conrod_pin_end  = 14.0          # pin centre to the ear tip
+tongue_t        = 12.0          # flat bar plug-welded into the shaft nose
+tongue_pin_end  = 16.0          # pin centre to the tongue tip
+tongue_slot     = 35.0          # depth of the slot in the shaft nose
+# stickout must clear the con-rod ear tip when the joint swings:
+tongue_stickout = tongue_pin_end + conrod_pin_end + 8.0
+tongue_len      = tongue_slot + tongue_stickout
+conrod_pin_dia  = rotor_pin_dia
+
 # --- auger station layout ---------------------------------------------------
-x_auger_front   = -30.0
+# --- ROTOR / CON-ROD / SHAFT CHAIN.  Everything downstream follows from it. --
+# Worked forward from the rotor, because the rotor's position is set by the
+# stator and nothing else can move.  The auger front used to be a hard-coded
+# -30, which put the shaft nose 200 mm inside the space the con-rod needs.
+x_rotor_tip     = -rotor_free_len                       # rotor's rear tip
+x_rotor_pin     = x_rotor_tip + rotor_pin_inset
+x_shaft_pin     = x_rotor_pin - conrod_len
+x_shaft_nose    = x_shaft_pin - (tongue_stickout - tongue_pin_end)
+x_auger_front   = x_shaft_nose - 12.0
 x_auger_back    = -615.0        # right up to the rear cover: a dead annulus at the
                                 # gland is a cavity the flush procedure cannot reach
 auger_len       = x_auger_front - x_auger_back
@@ -240,47 +297,64 @@ _pitch_ideal    = (auger_overfeed * pump_disp_cc * 1000.0
                    / (_flight_area * auger_fill_eta) + auger_flight_t)
 # then snap it so a whole number of pitches exactly fills the auger span --
 # that is what keeps every cross-pin hole on the same clock angle.
-n_auger_pitch   = max(1, int(round(auger_len / _pitch_ideal)))
+# floor, not round: snapping to a FINER pitch than the ideal cuts the swept
+# volume and can drop the overfeed below target.  Coarser is always safe.
+n_auger_pitch   = max(1, int(auger_len / _pitch_ideal))
 auger_pitch     = auger_len / n_auger_pitch
 auger_pitch_alt = auger_len / max(1, n_auger_pitch - 2)   # coarser spare set
 auger_seg_len   = 2 * auger_pitch
-n_auger_full    = int(auger_len // auger_seg_len)
+n_auger_full    = int(auger_len / auger_seg_len + 1e-9)
 auger_tail_len  = auger_len - n_auger_full * auger_seg_len
 auger_clear     = auger_radial_clear
 auger_swept_cc  = (_flight_area * (auger_pitch - auger_flight_t)
                    * auger_fill_eta / 1000.0)            # cm3/rev, actual
 
-# --- con-rod (rotor articulation) -------------------------------------------
-conrod_len      = 140.0
-conrod_bar      = 32.0
-conrod_fork_t   = 8.0
-tongue_t        = 12.0          # flat bar plug-welded into the shaft nose
-conrod_pin_dia  = rotor_pin_dia
-
 # --- frame ------------------------------------------------------------------
 barrel_cl_h     = 750.0         # barrel centreline above the ground
-skid_len        = 1400.0
+# The top rails pass under the STATOR (89 OD), not the barrel (76.2 OD), and
+# the stator cradle has to fit between the rail top and the stator.  Deriving
+# the rail height from the barrel put the rails 6 mm inside the stator.
+stator_cradle_base = 14.0
+stator_cradle_h = stator_od / 2 + 0.5 + stator_cradle_base
+top_rail_top    = barrel_cl_h - stator_cradle_h
+top_rail_z      = top_rail_top - ptr_size
+barrel_saddle_h = barrel_cl_h - barrel_od / 2 - top_rail_top
+skid_len        = 1450.0
 skid_w          = 600.0
 
 # --- bearings ---------------------------------------------------------------
 pillow_block    = "UCP207"      # 35 mm bore
-x_pb_front      = -800.0
-x_pb_rear       = -920.0
+x_pb_front      = -790.0
+x_pb_rear       = -900.0
 
 # --- drill drive station ----------------------------------------------------
-x_shaft_rear    = -960.0        # end of the 35 mm shaft
-x_hex_back      = x_shaft_rear - hex_free_len          # -1030, chuck lives here
+x_shaft_rear    = -1000.0       # end of the 35 mm shaft.  Set by the rear
+                                # pillow block plus the hex stub sleeve: the
+                                # assembly clash check found the 42 mm sleeve
+                                # sitting inside the UCP207 housing.
+# the weld plug sits BEYOND the shaft end, so the chuck face is a plug
+# thickness further back than hex_free_len alone suggests
+x_hex_back      = x_shaft_rear - hex_plug_t - hex_free_len
 # stations derived from the MEASURED drill dimensions, not guessed:
 x_chuck_front   = x_hex_back + drill_chuck_depth       # jaws close here
 x_chuck_back    = x_chuck_front - drill_chuck_body_len # gearcase nose
-x_drill_upright = x_chuck_back - drill_aux_offset      # ONE steel upright
-x_torque_lug    = x_drill_upright                      # steel lug: TORQUE PATH
-x_drill_cradle  = x_drill_upright - 55                 # printed saddle: CLAMP ONLY
+# One steel bracket does both jobs: a half-round torque lug at its front edge
+# bearing on the aux-handle collar, and a flat behind it carrying the printed
+# saddle.  Sizing the saddle at 130 long put it straight through the lug --
+# there is only (drill_body_len - drill_aux_offset) of body behind the collar.
+x_torque_lug    = x_chuck_back - drill_aux_offset      # set by the DRILL
 cradle_plate_t  = 10.0
-cradle_plate_l  = 130.0
+cradle_plate_l  = 46.0
+x_drill_upright = x_torque_lug - 9.0 - cradle_plate_l / 2
+x_drill_cradle  = x_drill_upright                      # printed saddle: CLAMP ONLY
 cradle_wall     = 8.0           # printed saddle wall under the drill
+cradle_clr      = 0.4           # bore clearance on the drill body
 cradle_foot_t   = 12.0          # printed saddle foot onto the steel plate
 cradle_strap_t  = 10.0
+# height of the drill axis above the steel cradle plate, from the printed
+# saddle's own stack.  frame_drawing and assembly both read this, so the
+# strap cannot end up 0.4 mm inside the saddle again.
+cradle_axis_local = cradle_foot_t + cradle_wall + drill_body_dia / 2 + cradle_clr
 
 # --- 3D printer -------------------------------------------------------------
 printer_x       = 350.0         # mm  TBD  confirm against the H2C spec  VERIFY

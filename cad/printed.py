@@ -78,26 +78,46 @@ def gland_follower():
 def stator_cradle(height=None):
     """Non-structural.  The stator hangs off the tie rods; this only stops it
     drooping into a banana, which closes the bore and spikes the torque."""
-    H = height if height is not None else P.collar_top_z
+    H = height if height is not None else P.stator_cradle_h
     r = P.stator_od / 2 + 0.5
-    w = P.stator_od + 110
+    w = P.stator_od + 150
     body = extrude(Rectangle(w, 90), amount=H)
     body -= Pos(0, 0, H) * Rot(90, 0, 0) * extrude(Circle(r), amount=200, both=True)
     for x in (-w / 2 + 22, w / 2 - 22):
         body -= Pos(x, 0, -1) * extrude(SlotOverall(26, 9), amount=H + 2)
+    # channels for the two LOWER tie-rod spacers.  Without them the cradle sits
+    # straight through them -- which is what the assembly clash check found.
+    # 21 mm of material bridges over each channel, so it stays one piece.
+    # Circular channels, not open slots: the web left between the stator groove
+    # and the spacer is only ~3.5 mm and an open slot cuts it, which splits the
+    # cradle into three loose pieces.  The spacers slide out axially with the
+    # stator at washout, so a closed channel costs nothing.
+    for sx in (-1, 1):
+        body -= (Pos(sx * P.tie_xy, 0, H - P.tie_xy) * Rot(90, 0, 0)
+                 * extrude(Circle((P.spacer_od + 2.0) / 2), amount=200, both=True))
     return body.clean()
 
 
 def stator_strap():
-    """Printed keeper over the cradle.  2 x M8, FINGER TIGHT -- it aligns the
-    stator, it does not clamp it.  Local z = 0 is the stator centreline."""
+    """Printed keeper that caps the stator on the cradle.  2 x M8, FINGER TIGHT
+    -- it aligns the stator, it does not clamp it.
+
+    Printed valley-up (bore centred on the TOP face), so there is no crown
+    overhang and no supports.  The assembly flips it.  The earlier version
+    spanned a full arch from -r to +r and duplicated the cradle's lower half --
+    which the assembly clash check found the moment both were placed."""
     r = P.stator_od / 2 + 0.5
-    w = P.stator_od + 110
-    body = Pos(0, 0, -r) * extrude(Rectangle(w, 40), amount=2 * r + 14)
-    body -= Rot(90, 0, 0) * extrude(Circle(r), amount=200, both=True)
-    body -= Pos(0, 0, -r - 1) * extrude(Rectangle(P.stator_od + 1, 50), amount=1.5)
+    w = P.stator_od + 150
+    h = r + 16.0
+    body = extrude(Rectangle(w, 40), amount=h)
+    body -= Pos(0, 0, h) * Rot(90, 0, 0) * extrude(Circle(r), amount=200, both=True)
     for x in (-w / 2 + 22, w / 2 - 22):
-        body -= Pos(x, 0, -r - 1) * extrude(Circle(4.4), amount=2 * r + 20)
+        body -= Pos(x, 0, -1) * extrude(Circle(4.4), amount=h + 2)
+    # channels for the two UPPER tie-rod spacers, open at the face that goes
+    # down over the stator (local +z here, because this prints inverted).
+    for sx in (-1, 1):
+        body -= (Pos(sx * P.tie_xy, 0, h - P.tie_xy) * Rot(90, 0, 0)
+                 * extrude(Circle((P.spacer_od + 2.0) / 2), amount=200, both=True))
     return body.clean()
 
 

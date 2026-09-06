@@ -22,7 +22,7 @@ def _emboss(txt, size, x, y, z, depth=0.8):
 # Drill cradle -- CLAMPING LOAD ONLY
 # ===========================================================================
 def _cradle_common():
-    R = P.drill_body_dia / 2 + CLR
+    R = P.drill_body_dia / 2 + P.cradle_clr
     L = P.cradle_plate_l
     axis = P.cradle_foot_t + P.cradle_wall + R        # above the steel plate
     y_ear = R + P.cradle_wall + 26.0
@@ -47,14 +47,17 @@ def drill_cradle_saddle():
     body = foot + body
     body -= Pos(0, 0, axis) * Rot(0, 90, 0) * extrude(
         Circle(R), amount=L + 20, both=True)
-    for sx in (-1, 1):
+    # Bolt rows: one at x=0, and a second pair only if the saddle is long
+    # enough to space them.  The saddle length follows the drill body available
+    # behind the aux-handle collar, and that is often only ~46 mm.
+    xs = [0.0] if L < 90 else [-(L / 2 - 22), L / 2 - 22]
+    for sx in xs:
         for sy in (-1, 1):
-            body -= Pos(sx * (L / 2 - 22), sy * (y_foot - 16), -1) * extrude(
+            body -= Pos(sx, sy * (y_foot - 16), -1) * extrude(
                 SlotOverall(26, 9.0), amount=P.cradle_foot_t + 2)       # M8 slots
-            body -= Pos(sx * (L / 2 - 26), sy * y_ear * 0.78, -1) * extrude(
+            body -= Pos(sx, sy * y_ear * 0.78, -1) * extrude(
                 Circle(4.4), amount=axis + 2)                           # M8 strap
-    body += _emboss("CLAMP ONLY - TORQUE GOES THROUGH THE STEEL", 4.6, 0,
-                    y_foot - 6, P.cradle_foot_t)
+    body += _emboss("CLAMP ONLY", 5.0, 0, y_foot - 8, P.cradle_foot_t)
     return body.clean()
 
 
@@ -71,9 +74,10 @@ def drill_cradle_strap():
     bore = Circle(R) + make_face(Polyline((-a, a, 0), (0, R * 1.4142136, 0),
                                           (a, a, 0), close=True))
     body -= Pos(0, 0, 0) * extrude(Plane.YZ * bore, amount=L + 20, both=True)
-    for sx in (-1, 1):
+    xs = [0.0] if L < 90 else [-(L / 2 - 22), L / 2 - 22]
+    for sx in xs:
         for sy in (-1, 1):
-            body -= Pos(sx * (L / 2 - 26), sy * y_ear * 0.78, -1) * extrude(
+            body -= Pos(sx, sy * y_ear * 0.78, -1) * extrude(
                 Circle(4.4), amount=h + 2)
     return body.clean()
 
@@ -201,7 +205,10 @@ def npt_dust_cap():
     NOT a pressure cap and not a thread: it keeps rain, grit and wasps out of
     an open port between drilling day and pour day.  Pull tab and a lanyard
     hole, because twelve small caps on a site is twelve lost caps."""
-    bore = 26.6                     # 1" NPT thread minor
+    # 1" NPT female thread minor.  This is the COUPLING bore, not the hole in
+    # the post, so it is unaffected by post_shape -- square or round, the cap
+    # plugs the same fitting.
+    bore = 26.6
     body = extrude(Circle(42 / 2), amount=4.0)
     body += Pos(0, 0, 4) * extrude(Circle(bore / 2 - 0.5), amount=16)
     for i in range(3):              # sealing/gripping barbs

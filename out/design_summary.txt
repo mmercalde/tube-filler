@@ -5,12 +5,16 @@
 ==============================================================================
 1  THE JOB
 ==============================================================================
-  post internal volume                             23.2 L  (76 OD x 3.05 wall x 6 m)
-  x 12 posts                                        278 L  
+  post bore (square)                     70.1 x 70.1 bore  76.2 sq PTR x 3.05 wall x 6 m
+  post internal volume                             29.5 L  = side^2 x length
+  x 12 posts                                        354 L  
   + hose hold-up                                    4.1 L  (8 m of 1")
-  grout to mix (10% waste)                          310 L  
-  ! The brief assumed ~27 L/post.  76.2 x 3.05 x 6 m holds 23.2 L.
-    Re-measure the post wall before ordering cement; at cal-11 the job is 278 L, not 324 L.
+  grout to mix (10% waste)                          394 L  
+  ! The brief assumed ~27 L/post.  76.2 sq PTR x 3.05 wall holds 29.5 L -- MORE, not less.
+    The job is 354 L, not 324 L -- a difference of 30 L (42 kg of cement).
+    Square PTR is the reason: a 76.2 square bore is 4914 mm2 against 3859 mm2 for round
+    tube of the same nominal size -- 27% more, and it all has to be
+    mixed.  Under-ordering cement stops you mid-post.
 
 ==============================================================================
 2  PUMP SPEED AND FLOW
@@ -19,7 +23,7 @@
   rotor speed                                     250 rpm  direct -- no reducer, no coupling
   displacement                                 50 cm3/rev  vendor spec
   flow                                        12.50 L/min  
-  fill time per post                             1.85 min  12 posts = 22 min of pumping
+  fill time per post                             2.36 min  12 posts = 28 min of pumping
 
 ==============================================================================
 3  PRESSURE REQUIRED AT THE PUMP OUTLET
@@ -97,11 +101,11 @@
 5  AUGER FEED MATCH
 ==============================================================================
   flight annulus                                 1508 mm2  OD 62 / hub 44
-  pitch                                           65.0 mm  = 1.05 x OD
-  segments                               4 x 130 + 1 x 65  9 pitches span the barrel exactly
-  swept volume @ eta=0.75                      67 cm3/rev  
-  OVERFEED RATIO                                   1.33 x  target >= 1.30
-  starves below fill factor                          0.56  print the 84 mm-pitch spares if it does
+  pitch                                           74.2 mm  = 1.19 x OD
+  segments                               2 x 148 + 1 x 74  5 pitches span the barrel exactly
+  swept volume @ eta=0.75                      77 cm3/rev  
+  OVERFEED RATIO                                   1.54 x  target >= 1.30
+  starves below fill factor                          0.49  print the 124 mm-pitch spares if it does
 
 ==============================================================================
 6  AXIAL THRUST -- rotor pushes the shaft REARWARD
@@ -129,11 +133,11 @@
 ==============================================================================
 8  DRIVE SHAFT DEFLECTION  (why the shaft is 35 mm)
 ==============================================================================
-  unsupported overhang                             770 mm  front pillow block -> rotor joint
-  deflection, self weight                         0.35 mm  
-  deflection, 150 N side load                     1.55 mm  
-  TOTAL                                           1.90 mm  
-  auger radial clearance                          4.00 mm  margin 2.1 x PASS
+  unsupported overhang                             546 mm  front pillow block -> con-rod pin
+  deflection, self weight                         0.09 mm  
+  deflection, 150 N side load                     0.55 mm  
+  TOTAL                                           0.64 mm  
+  auger radial clearance                          4.00 mm  margin 6.2 x PASS
 
 ==============================================================================
 8b  ROTOR ARTICULATION
@@ -181,13 +185,15 @@
     drain itself into the hopper, and you will not see it happen.
 
 ==============================================================================
-10  MATERIALS FOR THE POUR
+10  MATERIALS FOR THE POUR  (12 x square posts)
 ==============================================================================
-  grout to mix                                      310 L  1:2 cement:sand, w/c 0.50
-  cement                                           186 kg  = 3.7 sacks of 50 kg
-  sand (sieved <= 3 mm)                            372 kg  
-  water                                              93 L  
-  hopper holds                                       44 L  = 1.9 posts per load
+  bore area per post                             4914 mm2  70.1 x 70.1 bore (square)
+  volume per post                                 29.48 L  
+  grout to mix                                      394 L  1:2 cement:sand, w/c 0.50
+  cement                                           236 kg  = 4.7 sacks of 50 kg
+  sand (sieved <= 3 mm)                            472 kg  
+  water                                             118 L  
+  hopper holds                                       44 L  = 1.5 posts per load
 
 ==============================================================================
 ACCEPTANCE CHECKS

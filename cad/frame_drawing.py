@@ -17,10 +17,11 @@ PTR = P.ptr_size
 SKID_F = 150.0
 SKID_R = SKID_F - P.skid_len
 RAIL_Y = P.skid_w / 2 - PTR / 2
-TOP_Z = P.barrel_cl_h - P.barrel_od / 2 - PTR          # top rail underside
+# Set in params from the STATOR OD plus the printed cradle, NOT from the
+# barrel: the stator is the fat part and the rails have to pass under it.
+TOP_Z = P.top_rail_z
 # printed saddle wall + steel cradle plate sit between the upright and the drill
-DRILL_TOP = (P.barrel_cl_h - P.drill_body_dia / 2 - P.cradle_wall
-             - P.cradle_foot_t - P.cradle_plate_t)
+DRILL_TOP = P.barrel_cl_h - P.cradle_axis_local - P.cradle_plate_t
 LEG_X = (100.0, -450.0, -1050.0)
 XM = tuple(sorted((134.0, -50.0, -450.0, -800.0, -1050.0, SKID_R + 30)))
 
@@ -241,16 +242,19 @@ def draw(scale=0.30):
         "  3. Tack the whole skid first.  Check the two diagonals equal within 2 mm.  THEN weld out.",
         "  4. Weld the top rails LAST, with the barrel clamped in its saddles.  The barrel, not the",
         "     frame, is the alignment datum for the whole machine.",
-        "  5. Saddles: 2 off, 6 mm plate, R38.1 notch, on the top rails at x = -100 and x = -520.",
-        "  6. Pillow-block sub-plate: 10 mm, 4 x M12 in 14 x 40 SLOTS running along x, so the whole",
-        "     drive train can be drawn rearward to change the auger.",
+        f"  5. Barrel saddles: 2 off, 6 mm plate, R{P.barrel_od/2:.1f} notch,",
+        f"     {P.barrel_saddle_h:.0f} mm tall, on the top rails at x = -100 and x = -520.",
+        "     Top rails are set by the STATOR (89 OD), not the barrel; the printed",
+        f"     stator cradle is {P.stator_cradle_h:.0f} mm high to suit.  See params.py.",
+        "  6. Pillow-block sub-plate: 10 mm, 4 x M12 in 14 x 40 SLOTS running along x,",
+        "     so the whole drive train can be drawn rearward to change the auger.",
         "  7. Lifting eyes: 4 off, 12 mm plate, 30 mm hole, on the top rails above the legs.",
-        "  8. DRILL STATION -- one upright, two jobs.  The 10 mm torque lug is welded to",
-        "     its FRONT face, half-round to the measured aux-handle collar: that lug is the",
-        "     ONLY torque path.  The 10 mm cradle plate cantilevers REARWARD on the",
-        "     outrigger and carries the printed saddle, which clamps and nothing else.",
-        "     Weld both drill braces.  Unbraced, that upright sags 2.4 mm under the",
-        "     1160 N reaction and the drill cocks off the stub axis.",
+        "  8. DRILL STATION -- ONE 10 mm bracket on top of the upright does both jobs:",
+        f"     a half-round torque lug at its front edge, cut to the measured",
+        f"     {P.drill_aux_handle_dia:.0f} mm aux-handle collar, and a {P.cradle_plate_l:.0f} mm flat behind it",
+        "     carrying the printed saddle.  The LUG IS THE ONLY TORQUE PATH; the printed",
+        "     saddle clamps and nothing else.  Weld both drill braces -- unbraced, that",
+        "     upright sags 2.4 mm under the 1160 N reaction and the drill cocks.",
         "  9. Paint everything.  Mask the clamp-plate faces -- they are gasket faces.",
     ]:
         S.text(tx, y, n, "t")

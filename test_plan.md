@@ -145,12 +145,12 @@ tube.
 |---|---|---|
 | G-1 | Prime the hose with 5 L of cement milk first | Grout follows without a bridge. |
 | G-2 | Pump into the barrow, free discharge | 8.5–10.5 L/min. Confirm against the bucket. |
-| G-3 | Connect to the test tube's 1" port. Pump. | Gauge settles in the **2–4 bar** band and stays there. |
+| G-3 | Connect to the test post's 1" port. Pump. | Gauge settles in the **2–4 bar** band and stays there. |
 | G-4 | Watch the vent at the top | Grout appears at the top in **2.0–3.0 min**. Stop when it does. |
 | G-5 | Drill load | Within ~1.5 N.m of the water figure, and the gearcase still only warm after a full post. If it is hot after one post, plan a cooling break between posts and say so out loud to whoever is mixing. |
 | G-6 | Compare the gauge to prediction | Compare to `calcs` section 3. If the real pressure is far above the τ₀=100 Pa row, set `grout_tau0` in `params.py` to match and re-run — you now know your actual mix. |
 | G-7 | Flush, timed, per README §8 | Under 5 minutes to open. Nothing set at inspection. |
-| G-8 | Next day: cut the test tube open, or sound it | Solid fill, no voids, no segregation, no water pocket at the top. |
+| G-8 | Next day: cut the test post open, or sound it | Solid fill, no voids, no segregation, no water pocket at the top. |
 
 **Abort criteria:**
 - **A-9** Gauge exceeds 6 bar → **open the bypass, stop.** Thin the mix, shorten
@@ -161,7 +161,7 @@ tube.
   flush, repack, and increase the grease purge interval.
 - **A-12** G-8 finds voids → the fill rate is too fast for the air to escape, or
   the vent is undersized. Slow down (a 10:1 reducer, or throttle at the
-  discharge valve) and re-test. **Find this on the test tube, not on post 9.**
+  discharge valve) and re-test. **Find this on the test post, not on post 9.**
 
 ---
 
@@ -169,7 +169,7 @@ tube.
 
 Go to the twelve posts only when:
 
-- every Stage G criterion passed on the test tube,
+- every Stage G criterion passed on the test post,
 - `params.py` holds the **measured** `T_stator_friction` and `grout_tau0`,
 - the drive verdict in `calcs` is PASS or MARGINAL, and if MARGINAL the day is
   planned around cooling breaks,

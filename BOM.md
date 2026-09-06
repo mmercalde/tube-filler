@@ -23,6 +23,7 @@ from the CAD.
 | Grout hose | 1 | 1" ID x 8 m concrete placement hose, >= 40 bar WP, crimped ends | Gates / JGB | manguera para concreto 1" | $130 | $130 |
 | Whip checks | 2 | hose-to-hose safety cable, 1" hose | Dixon WS2 | cable de seguridad para manguera | $9 | $18 |
 | Half coupling, discharge | 1 | 1" NPT 3000# forged steel | hardware store | media copla 1" cedula 80 | $8 | $8 |
+| Half couplings, POST PORTS | 12 | 1" NPT 3000# forged steel, one per post. Welds to a FLAT face of the square PTR -- no saddle cut, no fish-mouth. | hardware store | media copla 1" cedula 80 | $8 | $96 |
 | Half coupling, gauge | 1 | 1/4" NPT 3000# forged steel | hardware store | media copla 1/4" | $4 | $4 |
 | Half coupling, grease | 1 | 1/8" NPT 3000# forged steel | hardware store | media copla 1/8" | $4 | $4 |
 | Grease nipple | 1 | 1/8" NPT straight zerk | hardware store | grasera 1/8" | $3 | $3 |
@@ -37,9 +38,15 @@ from the CAD.
 | Filament | 1 | see out/print_manifest.md for the exact split and totals (~8 kg across 56 parts). ASA for anything that lives outdoors or against a warm drill; PETG for the rest. | any | any | $155 | $155 |
 | Paint | 1 | etch primer + enamel | hardware store | ferreteria | $26 | $26 |
 | Anti-seize + grease | 1 | copper anti-seize for the tie rods; EP2 for the gland | hardware store | ferreteria | $18 | $18 |
-| | | | | | **TOTAL** | **$1045** |
+| | | | | | **TOTAL** | **$1141** |
 
-Without the rotor/stator set (owner already bought it): **$725**.
+Without the rotor/stator set (owner already bought it): **$821**.
+
+
+> **Two different 3" stocks.**  The pump barrel is ROUND tube (76.2 OD x 3.05).  The twelve posts are SQUARE PTR
+> (76.2 across flats x 3.05).  Measure both; they are separate purchases and `params.py` keeps them in
+> separate blocks with no cross-reference.  The square bore holds 29.5 L per post,
+> 27% more than round tube of the same nominal size, and the cement order follows from it.
 
 
 ## 2. Fabricated -- steel
@@ -48,7 +55,7 @@ Every DXF named here is in `out/`.  Cut lengths are square cuts unless stated.
 
 | Item | Qty | Stock | Cut / operations |
 |---|--:|---|---|
-| Barrel | 1 | owner's 3" tube 76.2 OD x 3.05 wall | cut 600 mm. Slot 200 x 50 in the top (developed width 54.5 -- use barrel_slot_wrap_template.dxf) |
+| Barrel (ROUND tube -- not post stock) | 1 | owner's round tube 76.2 OD x 3.05 wall | cut 600 mm. Slot 200 x 50 in the top (developed width 54.5 -- use barrel_slot_wrap_template.dxf) |
 | Adapter plate | 1 | 10 mm plate | 135 x 135; bore 50; 4 x 11 on 125.7 BC (diagonals). adapter_plate.dxf |
 | Discharge rear plate | 1 | 10 mm plate | 135 x 135; bore 54; same 4 tie holes. discharge_rear_plate.dxf |
 | Discharge chamber ring | 1 | 2" sch40 pipe | 2" sch40 (60.3 OD x 52.5 ID) x 35 mm |
@@ -58,16 +65,16 @@ Every DXF named here is in `out/`.  Cut lengths are square cuts unless stated.
 | Barrel rear flange | 1 | 10 mm plate | 140 sq; bore 70.1; 4 x 11 on 118 BC. barrel_rear_flange.dxf |
 | Barrel rear cover | 1 | 10 mm plate | 140 sq; bore 73 (2-7/8" hole saw); same bolt pattern + 2 x M10 gland studs at 96 centres. barrel_rear_cover.dxf |
 | Stuffing box | 1 | 2-1/2" sch40 pipe | 2-1/2" sch40 (73.0 OD x 62.7 ID) x 95 mm; 8 mm grease hole at 26 mm from the inner end |
-| Shaft sleeve (sacrificial) | 2 | 1-1/4" sch40 pipe | 1-1/4" sch40 (42.2 OD x 35.0 ID) x 130 mm x2  <-- make two; it is a consumable |
+| Shaft sleeve (sacrificial) | 2 | 1-1/4" sch40 pipe | 1-1/4" sch40 (42.2 OD x 35.0 ID) x 110 mm x2  <-- make two; it is a consumable |
 | Gland plate | 1 | 12 mm plate | 136 x 60; bore 44; 2 x 11 at 96. gland_plate.dxf |
 | Gland studs | 2 | M10 rod | cut 90 mm, weld into the rear cover |
-| Drive shaft | 1 | 35 mm cold-rolled bar (1045 preferred) | cut 930 mm; 4 x 6 cross holes at 130 pitch (use the printed jig); 1 x 8 mm cross hole at the rear for the drill stub; 10 x 8 keyway at the coupling (file it, or buy a keyed shaft) |
+| Drive shaft | 1 | 35 mm cold-rolled bar (1045 preferred) | cut 756 mm; 2 x 6 cross holes at 148 pitch (use the printed jig); 1 x 8 mm cross hole at the rear for the drill stub; 10 x 8 keyway at the coupling (file it, or buy a keyed shaft) |
 | Shaft tongue | 1 | 12 mm flat bar | 32 wide x 70 long; 12.5 pin hole. Slot the shaft nose 12 mm wide x 55 deep, insert, fillet both sides. shaft_tongue.dxf |
 | Con-rod bar | 1 | 32 mm round bar | cut 91 mm |
 | Con-rod ears | 4 | 8 mm plate | 32 x 45; 12.5 pin hole 14 from the end. THE TWO FORKS ARE AT 90 DEG TO EACH OTHER -- see cad/conrod.py |
 | Hex stub -- PRIMARY INPUT | 1 | 1-1/4" sch40 pipe + 1/2" A/F hex bar | 60 mm pipe + 70 mm hex free length, plug-welded; 8 mm cross hole. The drill chucks straight onto this. |
 | Drill torque lug | 1 | 10 mm plate | 90 x 70, half-round R21.5 to the MEASURED aux-handle collar; welded to the upright. THE ONLY TORQUE PATH. |
-| Drill cradle plate | 1 | 10 mm plate | 130 x 180; 4 x M8 tapped or clearance for the printed saddle |
+| Drill cradle plate | 1 | 10 mm plate | 46 x 180; 4 x M8 tapped or clearance for the printed saddle |
 | Break-in spacer set | 4 | 3/4" sch40 pipe | cut 269.5 mm x4 -- 0.5 mm crush instead of 2.0. Gauge them on the printed tie-rod gauge. This set is the first thing to try if the drill will not carry the stator friction. |
 | Hopper walls | 2 | 3 mm sheet | trapezoid 520/210 x 492 slant, +20 lap. hopper_wall_long_x2.dxf |
 | Hopper walls | 2 | 3 mm sheet | trapezoid 420/70 x 485 slant. hopper_wall_short_x2.dxf |
@@ -141,6 +148,6 @@ so the motor lies crosswise.
 | Gland follower + lantern ring | 2 spare each |
 | 3 mm nitrile gaskets | 4 spare |
 | Printed auger set | 1 spare set (see print manifest) |
-| Cement (see calcs section 10) | 4 sacks of 50 kg |
-| Sand, sieved <= 3 mm | ~380 kg |
-| Water | ~95 L, plus 200 L for flushing |
+| Cement -- 12 x square posts, 29.5 L each | 236 kg = 4.7 sacks of 50 kg |
+| Sand, sieved <= 3 mm through the printed screen | ~472 kg |
+| Water | ~118 L, plus 200 L for flushing |

@@ -1,112 +1,112 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1740" height="1440" viewBox="0 0 1740 1440"><style>text{font-family:monospace}.t{font-size:13px}.h{font-size:20px;font-weight:bold}.s{font-size:15px;font-weight:bold}.d{font-size:11px;fill:#0a5}.thick{fill:none;stroke:#000;stroke-width:1.6}.thin{fill:none;stroke:#000;stroke-width:0.7}.dim{fill:none;stroke:#0a5;stroke-width:0.6}.ghost{fill:none;stroke:#888;stroke-width:0.7;stroke-dasharray:6 3}.ctr{fill:none;stroke:#c00;stroke-width:0.6;stroke-dasharray:12 3 2 3}</style><rect width="1740" height="1440" fill="#fff"/><text x="30.0" y="36.0" class="h" text-anchor="start">TUBE-FILLER  --  FRAME WELDMENT</text>
 <text x="30.0" y="58.0" class="t" text-anchor="start">All members PTR 51 x 51 x 3.05 (2" square, cal-11).  Dimensions in mm.  BUILD TO THE NUMBERS, NOT THE PICTURE.</text>
-<text x="30.0" y="76.0" class="t" text-anchor="start">Machine datum x=0 is the FRONT FACE of the adapter plate.  +x is toward the discharge.  z is up from the ground.  NO MOTOR: a 1/2" paddle drill chucks onto the hex stub at x=-1030.</text>
+<text x="30.0" y="76.0" class="t" text-anchor="start">Machine datum x=0 is the FRONT FACE of the adapter plate.  +x is toward the discharge.  z is up from the ground.  NO MOTOR: a 1/2" paddle drill chucks onto the hex stub at x=-1080.</text>
 <line x1="30.0" y1="88.0" x2="1710.0" y2="88.0" class="thin"/>
 <text x="70.0" y="116.0" class="s" text-anchor="start">VIEW A  --  SIDE ELEVATION   (near frame + centreline drill station)</text>
-<polygon points="70.0,610.0 490.0,610.0 490.0,594.8 70.0,594.8" class="thick"/>
-<polygon points="115.0,411.7 490.0,411.7 490.0,396.4 115.0,396.4" class="thick"/>
-<polygon points="482.6,594.8 482.6,411.7 467.4,411.7 467.4,594.8" class="thick"/>
-<polygon points="317.6,594.8 317.6,411.7 302.4,411.7 302.4,594.8" class="thick"/>
-<polygon points="137.6,594.8 137.6,411.7 122.4,411.7 122.4,594.8" class="thick"/>
-<polygon points="317.1,597.6 392.1,414.6 377.9,408.8 302.9,591.9" class="thick"/>
-<polygon points="137.1,597.6 212.1,414.6 197.9,408.8 122.9,591.9" class="thick"/>
-<polygon points="79.0,610.0 130.0,610.0 130.0,594.8 79.0,594.8" class="thin"/>
-<polygon points="112.1,594.8 112.1,402.6 96.9,402.6 96.9,594.8" class="thin"/>
-<polygon points="104.5,402.5 65.5,402.5 65.5,417.8 104.5,417.8" class="thin"/>
-<rect x="262.0" y="373.6" width="180.0" height="22.9" class="ghost"/>
-<text x="352.0" y="389.0" class="d" text-anchor="middle">BARREL 600</text>
-<rect x="445.0" y="373.6" width="80.4" height="22.9" class="ghost"/>
-<text x="485.2" y="389.0" class="d" text-anchor="middle">STATOR 270</text>
-<rect x="525.4" y="373.6" width="27.6" height="22.9" class="ghost"/>
-<text x="539.2" y="389.0" class="d" text-anchor="middle">DISCH</text>
-<rect x="230.5" y="229.6" width="156.0" height="138.0" class="ghost"/>
-<text x="308.5" y="307.0" class="d" text-anchor="middle">HOPPER 44 L</text>
-<line x1="30.0" y1="385.0" x2="571.0" y2="385.0" class="ctr"/>
-<text x="577.0" y="389.0" class="d" text-anchor="start">barrel CL</text>
-<line x1="30.0" y1="610.0" x2="580.0" y2="610.0" class="thin"/>
+<polygon points="70.0,610.0 505.0,610.0 505.0,594.8 70.0,594.8" class="thick"/>
+<polygon points="115.0,417.9 505.0,417.9 505.0,402.7 115.0,402.7" class="thick"/>
+<polygon points="497.6,594.8 497.6,417.9 482.4,417.9 482.4,594.8" class="thick"/>
+<polygon points="332.6,594.8 332.6,417.9 317.4,417.9 317.4,594.8" class="thick"/>
+<polygon points="152.6,594.8 152.6,417.9 137.4,417.9 137.4,594.8" class="thick"/>
+<polygon points="332.0,597.7 407.0,420.9 393.0,415.0 318.0,591.8" class="thick"/>
+<polygon points="152.0,597.7 227.0,420.9 213.0,415.0 138.0,591.8" class="thick"/>
+<polygon points="79.0,610.0 145.0,610.0 145.0,594.8 79.0,594.8" class="thin"/>
+<polygon points="102.5,594.8 102.5,402.7 87.3,402.7 87.3,594.8" class="thin"/>
+<polygon points="94.9,402.7 81.1,402.7 81.1,417.9 94.9,417.9" class="thin"/>
+<rect x="277.0" y="373.6" width="180.0" height="22.9" class="ghost"/>
+<text x="367.0" y="389.0" class="d" text-anchor="middle">BARREL 600</text>
+<rect x="460.0" y="373.6" width="80.4" height="22.9" class="ghost"/>
+<text x="500.2" y="389.0" class="d" text-anchor="middle">STATOR 270</text>
+<rect x="540.4" y="373.6" width="27.6" height="22.9" class="ghost"/>
+<text x="554.2" y="389.0" class="d" text-anchor="middle">DISCH</text>
+<rect x="245.5" y="229.6" width="156.0" height="138.0" class="ghost"/>
+<text x="323.5" y="307.0" class="d" text-anchor="middle">HOPPER 44 L</text>
+<line x1="30.0" y1="385.0" x2="586.0" y2="385.0" class="ctr"/>
+<text x="592.0" y="389.0" class="d" text-anchor="start">barrel CL</text>
+<line x1="30.0" y1="610.0" x2="595.0" y2="610.0" class="thin"/>
 <line x1="70.0" y1="632.0" x2="79.0" y2="632.0" class="dim"/>
 <line x1="67.0" y1="629.0" x2="73.0" y2="635.0" class="dim"/>
 <line x1="76.0" y1="629.0" x2="82.0" y2="635.0" class="dim"/>
 <text x="74.5" y="628.0" class="d" text-anchor="middle">30</text>
-<line x1="79.0" y1="632.0" x2="130.0" y2="632.0" class="dim"/>
+<line x1="79.0" y1="632.0" x2="145.0" y2="632.0" class="dim"/>
 <line x1="76.0" y1="629.0" x2="82.0" y2="635.0" class="dim"/>
-<line x1="127.0" y1="629.0" x2="133.0" y2="635.0" class="dim"/>
-<text x="104.5" y="628.0" class="d" text-anchor="middle">170</text>
-<line x1="130.0" y1="632.0" x2="205.0" y2="632.0" class="dim"/>
-<line x1="127.0" y1="629.0" x2="133.0" y2="635.0" class="dim"/>
-<line x1="202.0" y1="629.0" x2="208.0" y2="635.0" class="dim"/>
-<text x="167.5" y="628.0" class="d" text-anchor="middle">250</text>
-<line x1="205.0" y1="632.0" x2="310.0" y2="632.0" class="dim"/>
-<line x1="202.0" y1="629.0" x2="208.0" y2="635.0" class="dim"/>
-<line x1="307.0" y1="629.0" x2="313.0" y2="635.0" class="dim"/>
-<text x="257.5" y="628.0" class="d" text-anchor="middle">350</text>
-<line x1="310.0" y1="632.0" x2="430.0" y2="632.0" class="dim"/>
-<line x1="307.0" y1="629.0" x2="313.0" y2="635.0" class="dim"/>
-<line x1="427.0" y1="629.0" x2="433.0" y2="635.0" class="dim"/>
-<text x="370.0" y="628.0" class="d" text-anchor="middle">400</text>
-<line x1="430.0" y1="632.0" x2="485.2" y2="632.0" class="dim"/>
-<line x1="427.0" y1="629.0" x2="433.0" y2="635.0" class="dim"/>
-<line x1="482.2" y1="629.0" x2="488.2" y2="635.0" class="dim"/>
-<text x="457.6" y="628.0" class="d" text-anchor="middle">184</text>
-<line x1="70.0" y1="658.0" x2="490.0" y2="658.0" class="dim"/>
+<line x1="142.0" y1="629.0" x2="148.0" y2="635.0" class="dim"/>
+<text x="112.0" y="628.0" class="d" text-anchor="middle">220</text>
+<line x1="145.0" y1="632.0" x2="220.0" y2="632.0" class="dim"/>
+<line x1="142.0" y1="629.0" x2="148.0" y2="635.0" class="dim"/>
+<line x1="217.0" y1="629.0" x2="223.0" y2="635.0" class="dim"/>
+<text x="182.5" y="628.0" class="d" text-anchor="middle">250</text>
+<line x1="220.0" y1="632.0" x2="325.0" y2="632.0" class="dim"/>
+<line x1="217.0" y1="629.0" x2="223.0" y2="635.0" class="dim"/>
+<line x1="322.0" y1="629.0" x2="328.0" y2="635.0" class="dim"/>
+<text x="272.5" y="628.0" class="d" text-anchor="middle">350</text>
+<line x1="325.0" y1="632.0" x2="445.0" y2="632.0" class="dim"/>
+<line x1="322.0" y1="629.0" x2="328.0" y2="635.0" class="dim"/>
+<line x1="442.0" y1="629.0" x2="448.0" y2="635.0" class="dim"/>
+<text x="385.0" y="628.0" class="d" text-anchor="middle">400</text>
+<line x1="445.0" y1="632.0" x2="500.2" y2="632.0" class="dim"/>
+<line x1="442.0" y1="629.0" x2="448.0" y2="635.0" class="dim"/>
+<line x1="497.2" y1="629.0" x2="503.2" y2="635.0" class="dim"/>
+<text x="472.6" y="628.0" class="d" text-anchor="middle">184</text>
+<line x1="70.0" y1="658.0" x2="505.0" y2="658.0" class="dim"/>
 <line x1="67.0" y1="655.0" x2="73.0" y2="661.0" class="dim"/>
-<line x1="487.0" y1="655.0" x2="493.0" y2="661.0" class="dim"/>
-<text x="280.0" y="654.0" class="d" text-anchor="middle">1400  SKID</text>
-<line x1="88.0" y1="399.0" x2="88.0" y2="678.0" class="ghost"/>
-<text x="92.0" y="684.0" class="d" text-anchor="start" transform="rotate(90 92.0 684.0)">x=-1190   printed drill saddle</text>
+<line x1="502.0" y1="655.0" x2="508.0" y2="661.0" class="dim"/>
+<text x="287.5" y="654.0" class="d" text-anchor="middle">1450  SKID</text>
+<line x1="94.9" y1="399.0" x2="94.9" y2="678.0" class="ghost"/>
+<text x="98.9" y="684.0" class="d" text-anchor="start" transform="rotate(90 98.9 684.0)">x=-1217   printed drill saddle</text>
 <line x1="104.5" y1="399.0" x2="104.5" y2="678.0" class="ghost"/>
-<text x="108.5" y="684.0" class="d" text-anchor="start" transform="rotate(90 108.5 684.0)">x=-1135   steel torque lug</text>
+<text x="108.5" y="684.0" class="d" text-anchor="start" transform="rotate(90 108.5 684.0)">x=-1185   steel torque lug</text>
 <line x1="136.0" y1="399.0" x2="136.0" y2="678.0" class="ghost"/>
-<text x="140.0" y="684.0" class="d" text-anchor="start" transform="rotate(90 140.0 684.0)">x=-1030   hex stub free end -- CHUCK HERE</text>
-<line x1="157.0" y1="399.0" x2="157.0" y2="678.0" class="ghost"/>
-<text x="161.0" y="684.0" class="d" text-anchor="start" transform="rotate(90 161.0 684.0)">x=-960   shaft rear / hex stub</text>
-<line x1="169.0" y1="399.0" x2="169.0" y2="678.0" class="ghost"/>
-<text x="173.0" y="684.0" class="d" text-anchor="start" transform="rotate(90 173.0 684.0)">x=-920   pillow block 2</text>
-<line x1="205.0" y1="399.0" x2="205.0" y2="678.0" class="ghost"/>
-<text x="209.0" y="684.0" class="d" text-anchor="start" transform="rotate(90 209.0 684.0)">x=-800   pillow block 1</text>
-<line x1="262.0" y1="399.0" x2="262.0" y2="678.0" class="ghost"/>
-<text x="266.0" y="684.0" class="d" text-anchor="start" transform="rotate(90 266.0 684.0)">x=-610   barrel rear + bolted cover</text>
-<line x1="445.0" y1="399.0" x2="445.0" y2="678.0" class="ghost"/>
-<text x="449.0" y="684.0" class="d" text-anchor="start" transform="rotate(90 449.0 684.0)">x=0   adapter plate face -- DATUM</text>
-<line x1="525.4" y1="399.0" x2="525.4" y2="678.0" class="ghost"/>
-<text x="529.4" y="684.0" class="d" text-anchor="start" transform="rotate(90 529.4 684.0)">x=268   stator front / discharge head</text>
-<line x1="46.0" y1="610.0" x2="46.0" y2="411.7" class="dim"/>
+<text x="140.0" y="684.0" class="d" text-anchor="start" transform="rotate(90 140.0 684.0)">x=-1080   hex stub free end -- CHUCK HERE</text>
+<line x1="160.0" y1="399.0" x2="160.0" y2="678.0" class="ghost"/>
+<text x="164.0" y="684.0" class="d" text-anchor="start" transform="rotate(90 164.0 684.0)">x=-1000   shaft rear / hex stub</text>
+<line x1="184.0" y1="399.0" x2="184.0" y2="678.0" class="ghost"/>
+<text x="188.0" y="684.0" class="d" text-anchor="start" transform="rotate(90 188.0 684.0)">x=-920   pillow block 2</text>
+<line x1="220.0" y1="399.0" x2="220.0" y2="678.0" class="ghost"/>
+<text x="224.0" y="684.0" class="d" text-anchor="start" transform="rotate(90 224.0 684.0)">x=-800   pillow block 1</text>
+<line x1="277.0" y1="399.0" x2="277.0" y2="678.0" class="ghost"/>
+<text x="281.0" y="684.0" class="d" text-anchor="start" transform="rotate(90 281.0 684.0)">x=-610   barrel rear + bolted cover</text>
+<line x1="460.0" y1="399.0" x2="460.0" y2="678.0" class="ghost"/>
+<text x="464.0" y="684.0" class="d" text-anchor="start" transform="rotate(90 464.0 684.0)">x=0   adapter plate face -- DATUM</text>
+<line x1="540.4" y1="399.0" x2="540.4" y2="678.0" class="ghost"/>
+<text x="544.4" y="684.0" class="d" text-anchor="start" transform="rotate(90 544.4 684.0)">x=268   stator front / discharge head</text>
+<line x1="46.0" y1="610.0" x2="46.0" y2="417.9" class="dim"/>
 <line x1="43.0" y1="607.0" x2="49.0" y2="613.0" class="dim"/>
-<line x1="43.0" y1="408.7" x2="49.0" y2="414.7" class="dim"/>
-<text x="42.0" y="510.8" class="d" text-anchor="middle" transform="rotate(-90 42.0 510.8)">661 top rail</text>
+<line x1="43.0" y1="414.9" x2="49.0" y2="420.9" class="dim"/>
+<text x="42.0" y="514.0" class="d" text-anchor="middle" transform="rotate(-90 42.0 514.0)">640 top rail</text>
 <line x1="18.0" y1="610.0" x2="18.0" y2="385.0" class="dim"/>
 <line x1="15.0" y1="607.0" x2="21.0" y2="613.0" class="dim"/>
 <line x1="15.0" y1="382.0" x2="21.0" y2="388.0" class="dim"/>
 <text x="14.0" y="497.5" class="d" text-anchor="middle" transform="rotate(-90 14.0 497.5)">750 barrel CL</text>
 <text x="1220.0" y="116.0" class="s" text-anchor="start">VIEW C  --  END ELEVATION (looking forward)</text>
 <rect x="1330.0" y="594.8" width="15.2" height="15.2" class="thin"/>
-<rect x="1330.0" y="396.4" width="15.2" height="15.2" class="thin"/>
+<rect x="1330.0" y="402.7" width="15.2" height="15.2" class="thin"/>
 <rect x="1494.8" y="594.8" width="15.2" height="15.2" class="thin"/>
-<rect x="1494.8" y="396.4" width="15.2" height="15.2" class="thin"/>
+<rect x="1494.8" y="402.7" width="15.2" height="15.2" class="thin"/>
 <polygon points="1502.4,594.8 1337.6,594.8 1337.6,610.0 1502.4,610.0" class="thin"/>
 <polygon points="1502.4,594.8 1337.6,594.8 1337.6,610.0 1502.4,610.0" class="thin"/>
 <polygon points="1502.4,594.8 1337.6,594.8 1337.6,610.0 1502.4,610.0" class="thin"/>
 <polygon points="1502.4,594.8 1337.6,594.8 1337.6,610.0 1502.4,610.0" class="thin"/>
 <polygon points="1502.4,594.8 1337.6,594.8 1337.6,610.0 1502.4,610.0" class="thin"/>
 <polygon points="1502.4,594.8 1337.6,594.8 1337.6,610.0 1502.4,610.0" class="thin"/>
-<polygon points="1502.4,396.4 1337.6,396.4 1337.6,411.7 1502.4,411.7" class="thin"/>
-<polygon points="1502.4,396.4 1337.6,396.4 1337.6,411.7 1502.4,411.7" class="thin"/>
-<polygon points="1502.4,396.4 1337.6,396.4 1337.6,411.7 1502.4,411.7" class="thin"/>
-<polygon points="1345.2,594.8 1345.2,411.7 1330.0,411.7 1330.0,594.8" class="thin"/>
-<polygon points="1510.0,594.8 1510.0,411.7 1494.8,411.7 1494.8,594.8" class="thin"/>
-<polygon points="1345.2,594.8 1345.2,411.7 1330.0,411.7 1330.0,594.8" class="thin"/>
-<polygon points="1510.0,594.8 1510.0,411.7 1494.8,411.7 1494.8,594.8" class="thin"/>
-<polygon points="1345.2,594.8 1345.2,411.7 1330.0,411.7 1330.0,594.8" class="thin"/>
-<polygon points="1510.0,594.8 1510.0,411.7 1494.8,411.7 1494.8,594.8" class="thin"/>
-<polygon points="1345.2,594.8 1345.2,411.7 1330.0,411.7 1330.0,594.8" class="thin"/>
-<polygon points="1510.0,594.8 1510.0,411.7 1494.8,411.7 1494.8,594.8" class="thin"/>
-<polygon points="1345.2,594.8 1345.2,411.7 1330.0,411.7 1330.0,594.8" class="thin"/>
-<polygon points="1510.0,594.8 1510.0,411.7 1494.8,411.7 1494.8,594.8" class="thin"/>
+<polygon points="1502.4,402.7 1337.6,402.7 1337.6,417.9 1502.4,417.9" class="thin"/>
+<polygon points="1502.4,402.7 1337.6,402.7 1337.6,417.9 1502.4,417.9" class="thin"/>
+<polygon points="1502.4,402.7 1337.6,402.7 1337.6,417.9 1502.4,417.9" class="thin"/>
+<polygon points="1345.2,594.8 1345.2,417.9 1330.0,417.9 1330.0,594.8" class="thin"/>
+<polygon points="1510.0,594.8 1510.0,417.9 1494.8,417.9 1494.8,594.8" class="thin"/>
+<polygon points="1345.2,594.8 1345.2,417.9 1330.0,417.9 1330.0,594.8" class="thin"/>
+<polygon points="1510.0,594.8 1510.0,417.9 1494.8,417.9 1494.8,594.8" class="thin"/>
+<polygon points="1345.2,594.8 1345.2,417.9 1330.0,417.9 1330.0,594.8" class="thin"/>
+<polygon points="1510.0,594.8 1510.0,417.9 1494.8,417.9 1494.8,594.8" class="thin"/>
+<polygon points="1345.2,594.8 1345.2,417.9 1330.0,417.9 1330.0,594.8" class="thin"/>
+<polygon points="1510.0,594.8 1510.0,417.9 1494.8,417.9 1494.8,594.8" class="thin"/>
+<polygon points="1345.2,594.8 1345.2,417.9 1330.0,417.9 1330.0,594.8" class="thin"/>
+<polygon points="1510.0,594.8 1510.0,417.9 1494.8,417.9 1494.8,594.8" class="thin"/>
 <rect x="1412.4" y="594.8" width="15.2" height="15.2" class="thin"/>
-<polygon points="1427.6,594.8 1427.6,402.6 1412.4,402.6 1412.4,594.8" class="thin"/>
-<rect x="1412.4" y="402.5" width="15.2" height="15.2" class="thin"/>
-<polygon points="1344.6,597.8 1427.0,405.6 1413.0,399.5 1330.6,591.8" class="thin"/>
-<polygon points="1509.4,591.8 1427.0,399.5 1413.0,405.6 1495.4,597.8" class="thin"/>
+<polygon points="1427.6,594.8 1427.6,402.7 1412.4,402.7 1412.4,594.8" class="thin"/>
+<rect x="1412.4" y="402.7" width="15.2" height="15.2" class="thin"/>
+<polygon points="1344.6,597.8 1427.0,405.7 1413.0,399.7 1330.6,591.8" class="thin"/>
+<polygon points="1509.4,591.8 1427.0,399.7 1413.0,405.7 1495.4,597.8" class="thin"/>
 <circle cx="1420.0" cy="385.0" r="11.4" class="thick"/>
 <rect x="1357.0" y="229.6" width="126.0" height="138.0" class="ghost"/>
 <line x1="1420.0" y1="628.0" x2="1420.0" y2="217.0" class="ctr"/>
@@ -121,61 +121,61 @@
 <text x="1359.6" y="497.5" class="d" text-anchor="middle" transform="rotate(-90 1359.6 497.5)">750</text>
 <circle cx="1420.0" cy="385.0" r="8.5" class="ghost"/>
 <text x="1420.0" y="368.4" class="d" text-anchor="middle">drill body 57 dia</text>
-<line x1="1454.0" y1="594.8" x2="1454.0" y2="402.6" class="dim"/>
+<line x1="1454.0" y1="594.8" x2="1454.0" y2="402.7" class="dim"/>
 <line x1="1451.0" y1="591.8" x2="1457.0" y2="597.8" class="dim"/>
-<line x1="1451.0" y1="399.6" x2="1457.0" y2="405.6" class="dim"/>
-<text x="1450.0" y="498.7" class="d" text-anchor="middle" transform="rotate(-90 1450.0 498.7)">641 upright</text>
+<line x1="1451.0" y1="399.7" x2="1457.0" y2="405.7" class="dim"/>
+<text x="1450.0" y="498.7" class="d" text-anchor="middle" transform="rotate(-90 1450.0 498.7)">640 upright</text>
 <text x="1307.6" y="652.0" class="d" text-anchor="start">Drill braces triangulate the upright:</text>
 <text x="1307.6" y="666.0" class="d" text-anchor="start">25 N.m on a 21 mm collar = ~1160 N</text>
 <text x="1307.6" y="680.0" class="d" text-anchor="start">sideways.  Unbraced it sags 2.4 mm.</text>
 <text x="550.0" y="940.0" class="s" text-anchor="start">VIEW B  --  PLAN   (skid heavy, top rails light)</text>
-<polygon points="70.0,1085.2 490.0,1085.2 490.0,1070.0 70.0,1070.0" class="thick"/>
-<polygon points="115.0,1085.2 490.0,1085.2 490.0,1070.0 115.0,1070.0" class="thin"/>
-<polygon points="70.0,1250.0 490.0,1250.0 490.0,1234.8 70.0,1234.8" class="thick"/>
-<polygon points="115.0,1250.0 490.0,1250.0 490.0,1234.8 115.0,1234.8" class="thin"/>
+<polygon points="70.0,1085.2 505.0,1085.2 505.0,1070.0 70.0,1070.0" class="thick"/>
+<polygon points="115.0,1085.2 505.0,1085.2 505.0,1070.0 115.0,1070.0" class="thin"/>
+<polygon points="70.0,1250.0 505.0,1250.0 505.0,1234.8 70.0,1234.8" class="thick"/>
+<polygon points="115.0,1250.0 505.0,1250.0 505.0,1234.8 115.0,1234.8" class="thin"/>
 <polygon points="86.6,1242.4 86.6,1077.6 71.4,1077.6 71.4,1242.4" class="thick"/>
-<polygon points="137.6,1242.4 137.6,1077.6 122.4,1077.6 122.4,1242.4" class="thick"/>
-<polygon points="212.6,1242.4 212.6,1077.6 197.4,1077.6 197.4,1242.4" class="thick"/>
-<polygon points="317.6,1242.4 317.6,1077.6 302.4,1077.6 302.4,1242.4" class="thick"/>
-<polygon points="437.6,1242.4 437.6,1077.6 422.4,1077.6 422.4,1242.4" class="thick"/>
-<polygon points="492.8,1242.4 492.8,1077.6 477.6,1077.6 477.6,1242.4" class="thick"/>
-<polygon points="137.6,1242.4 137.6,1077.6 122.4,1077.6 122.4,1242.4" class="thin"/>
-<polygon points="317.6,1242.4 317.6,1077.6 302.4,1077.6 302.4,1242.4" class="thin"/>
-<polygon points="492.8,1242.4 492.8,1077.6 477.6,1077.6 477.6,1242.4" class="thin"/>
-<polygon points="310.0,1085.2 385.0,1085.2 385.0,1070.0 310.0,1070.0" class="thin"/>
-<polygon points="310.0,1250.0 385.0,1250.0 385.0,1234.8 310.0,1234.8" class="thin"/>
-<polygon points="130.0,1085.2 205.0,1085.2 205.0,1070.0 130.0,1070.0" class="thin"/>
-<polygon points="130.0,1250.0 205.0,1250.0 205.0,1234.8 130.0,1234.8" class="thin"/>
-<polygon points="79.0,1167.6 130.0,1167.6 130.0,1152.4 79.0,1152.4" class="thick"/>
-<polygon points="104.5,1152.4 65.5,1152.4 65.5,1167.6 104.5,1167.6" class="thin"/>
-<polygon points="96.9,1077.6 96.9,1160.0 112.1,1160.0 112.1,1077.6" class="thin"/>
-<polygon points="112.1,1242.4 112.1,1160.0 96.9,1160.0 96.9,1242.4" class="thin"/>
-<line x1="30.0" y1="1160.0" x2="571.0" y2="1160.0" class="ctr"/>
+<polygon points="152.6,1242.4 152.6,1077.6 137.4,1077.6 137.4,1242.4" class="thick"/>
+<polygon points="227.6,1242.4 227.6,1077.6 212.4,1077.6 212.4,1242.4" class="thick"/>
+<polygon points="332.6,1242.4 332.6,1077.6 317.4,1077.6 317.4,1242.4" class="thick"/>
+<polygon points="452.6,1242.4 452.6,1077.6 437.4,1077.6 437.4,1242.4" class="thick"/>
+<polygon points="507.8,1242.4 507.8,1077.6 492.6,1077.6 492.6,1242.4" class="thick"/>
+<polygon points="152.6,1242.4 152.6,1077.6 137.4,1077.6 137.4,1242.4" class="thin"/>
+<polygon points="332.6,1242.4 332.6,1077.6 317.4,1077.6 317.4,1242.4" class="thin"/>
+<polygon points="507.8,1242.4 507.8,1077.6 492.6,1077.6 492.6,1242.4" class="thin"/>
+<polygon points="325.0,1085.2 400.0,1085.2 400.0,1070.0 325.0,1070.0" class="thin"/>
+<polygon points="325.0,1250.0 400.0,1250.0 400.0,1234.8 325.0,1234.8" class="thin"/>
+<polygon points="145.0,1085.2 220.0,1085.2 220.0,1070.0 145.0,1070.0" class="thin"/>
+<polygon points="145.0,1250.0 220.0,1250.0 220.0,1234.8 145.0,1234.8" class="thin"/>
+<polygon points="79.0,1167.6 145.0,1167.6 145.0,1152.4 79.0,1152.4" class="thick"/>
+<polygon points="94.9,1152.4 81.1,1152.4 81.1,1167.6 94.9,1167.6" class="thin"/>
+<polygon points="87.3,1077.6 87.3,1160.0 102.5,1160.0 102.5,1077.6" class="thin"/>
+<polygon points="102.5,1242.4 102.5,1160.0 87.3,1160.0 87.3,1242.4" class="thin"/>
+<line x1="30.0" y1="1160.0" x2="586.0" y2="1160.0" class="ctr"/>
 <line x1="46.0" y1="1242.4" x2="46.0" y2="1077.6" class="dim"/>
 <line x1="43.0" y1="1239.4" x2="49.0" y2="1245.4" class="dim"/>
 <line x1="43.0" y1="1074.6" x2="49.0" y2="1080.6" class="dim"/>
 <text x="42.0" y="1160.0" class="d" text-anchor="middle" transform="rotate(-90 42.0 1160.0)">549</text>
-<line x1="88.0" y1="1260.4" x2="104.5" y2="1260.4" class="dim"/>
-<line x1="85.0" y1="1257.4" x2="91.0" y2="1263.4" class="dim"/>
+<line x1="94.9" y1="1260.4" x2="104.5" y2="1260.4" class="dim"/>
+<line x1="91.9" y1="1257.4" x2="97.9" y2="1263.4" class="dim"/>
 <line x1="101.5" y1="1257.4" x2="107.5" y2="1263.4" class="dim"/>
-<text x="96.2" y="1256.4" class="d" text-anchor="middle">55</text>
+<text x="99.7" y="1256.4" class="d" text-anchor="middle">32</text>
 <text x="70.0" y="1276.4" class="d" text-anchor="start">NO MOTOR, NO REDUCER, NO COUPLING.  The drill chucks straight onto the hex stub.</text>
 <text x="70.0" y="1292.4" class="d" text-anchor="start">Operator stands at +y, one hand on the trigger.  The frame holds the drill.</text>
 <text x="1000.0" y="790.0" class="s" text-anchor="start">CUT LIST   (square cuts unless noted)</text>
 <text x="1000.0" y="814.0" class="t" text-anchor="start">QTY  LENGTH    MEMBER              STOCK</text>
 <line x1="1000.0" y1="820.0" x2="1560.0" y2="820.0" class="thin"/>
-<text x="1000.0" y="838.0" class="t" text-anchor="start">2    1400      skid rail           PTR 51x51x3</text>
-<text x="1000.0" y="857.0" class="t" text-anchor="start">2    1250      top rail            PTR 51x51x3</text>
+<text x="1000.0" y="838.0" class="t" text-anchor="start">2    1450      skid rail           PTR 51x51x3</text>
+<text x="1000.0" y="857.0" class="t" text-anchor="start">2    1300      top rail            PTR 51x51x3</text>
 <text x="1000.0" y="876.0" class="t" text-anchor="start">2    697       drill brace         PTR 51x51x3</text>
-<text x="1000.0" y="895.0" class="t" text-anchor="start">4    660       knee brace          PTR 51x51x3</text>
-<text x="1000.0" y="914.0" class="t" text-anchor="start">1    641       drill upright       PTR 51x51x3</text>
-<text x="1000.0" y="933.0" class="t" text-anchor="start">6    610       leg                 PTR 51x51x3</text>
+<text x="1000.0" y="895.0" class="t" text-anchor="start">1    640       drill upright       PTR 51x51x3</text>
+<text x="1000.0" y="914.0" class="t" text-anchor="start">4    640       knee brace          PTR 51x51x3</text>
+<text x="1000.0" y="933.0" class="t" text-anchor="start">6    589       leg                 PTR 51x51x3</text>
 <text x="1000.0" y="952.0" class="t" text-anchor="start">6    549       skid cross          PTR 51x51x3</text>
 <text x="1000.0" y="971.0" class="t" text-anchor="start">3    549       top cross           PTR 51x51x3</text>
-<text x="1000.0" y="990.0" class="t" text-anchor="start">1    170       drill rail          PTR 51x51x3</text>
-<text x="1000.0" y="1009.0" class="t" text-anchor="start">1    130       cradle outrigger    PTR 51x51x3</text>
+<text x="1000.0" y="990.0" class="t" text-anchor="start">1    220       drill rail          PTR 51x51x3</text>
+<text x="1000.0" y="1009.0" class="t" text-anchor="start">1    46        cradle outrigger    PTR 51x51x3</text>
 <line x1="1000.0" y1="1015.0" x2="1560.0" y2="1015.0" class="thin"/>
-<text x="1000.0" y="1032.0" class="t" text-anchor="start">     18.9      TOTAL PTR (m)       +10% = order 21 m</text>
+<text x="1000.0" y="1032.0" class="t" text-anchor="start">     18.8      TOTAL PTR (m)       +10% = order 21 m</text>
 <text x="1000.0" y="1066.0" class="t" text-anchor="start">WELD NOTES   (3.05 mm wall -- do not chase full penetration)</text>
 <text x="1000.0" y="1084.0" class="t" text-anchor="start">  1. 4 mm fillet, both sides where you can reach; elsewhere 40 mm stitch at 80 mm pitch.</text>
 <text x="1000.0" y="1102.0" class="t" text-anchor="start">  2. 7018 at 80-95 A, or 0.030 wire on C25 at ~130 A.  Back the heat off if you blow</text>
@@ -183,14 +183,17 @@
 <text x="1000.0" y="1138.0" class="t" text-anchor="start">  3. Tack the whole skid first.  Check the two diagonals equal within 2 mm.  THEN weld out.</text>
 <text x="1000.0" y="1156.0" class="t" text-anchor="start">  4. Weld the top rails LAST, with the barrel clamped in its saddles.  The barrel, not the</text>
 <text x="1000.0" y="1174.0" class="t" text-anchor="start">     frame, is the alignment datum for the whole machine.</text>
-<text x="1000.0" y="1192.0" class="t" text-anchor="start">  5. Saddles: 2 off, 6 mm plate, R38.1 notch, on the top rails at x = -100 and x = -520.</text>
-<text x="1000.0" y="1210.0" class="t" text-anchor="start">  6. Pillow-block sub-plate: 10 mm, 4 x M12 in 14 x 40 SLOTS running along x, so the whole</text>
-<text x="1000.0" y="1228.0" class="t" text-anchor="start">     drive train can be drawn rearward to change the auger.</text>
-<text x="1000.0" y="1246.0" class="t" text-anchor="start">  7. Lifting eyes: 4 off, 12 mm plate, 30 mm hole, on the top rails above the legs.</text>
-<text x="1000.0" y="1264.0" class="t" text-anchor="start">  8. DRILL STATION -- one upright, two jobs.  The 10 mm torque lug is welded to</text>
-<text x="1000.0" y="1282.0" class="t" text-anchor="start">     its FRONT face, half-round to the measured aux-handle collar: that lug is the</text>
-<text x="1000.0" y="1300.0" class="t" text-anchor="start">     ONLY torque path.  The 10 mm cradle plate cantilevers REARWARD on the</text>
-<text x="1000.0" y="1318.0" class="t" text-anchor="start">     outrigger and carries the printed saddle, which clamps and nothing else.</text>
-<text x="1000.0" y="1336.0" class="t" text-anchor="start">     Weld both drill braces.  Unbraced, that upright sags 2.4 mm under the</text>
-<text x="1000.0" y="1354.0" class="t" text-anchor="start">     1160 N reaction and the drill cocks off the stub axis.</text>
-<text x="1000.0" y="1372.0" class="t" text-anchor="start">  9. Paint everything.  Mask the clamp-plate faces -- they are gasket faces.</text></svg>
+<text x="1000.0" y="1192.0" class="t" text-anchor="start">  5. Barrel saddles: 2 off, 6 mm plate, R38.1 notch,</text>
+<text x="1000.0" y="1210.0" class="t" text-anchor="start">     21 mm tall, on the top rails at x = -100 and x = -520.</text>
+<text x="1000.0" y="1228.0" class="t" text-anchor="start">     Top rails are set by the STATOR (89 OD), not the barrel; the printed</text>
+<text x="1000.0" y="1246.0" class="t" text-anchor="start">     stator cradle is 59 mm high to suit.  See params.py.</text>
+<text x="1000.0" y="1264.0" class="t" text-anchor="start">  6. Pillow-block sub-plate: 10 mm, 4 x M12 in 14 x 40 SLOTS running along x,</text>
+<text x="1000.0" y="1282.0" class="t" text-anchor="start">     so the whole drive train can be drawn rearward to change the auger.</text>
+<text x="1000.0" y="1300.0" class="t" text-anchor="start">  7. Lifting eyes: 4 off, 12 mm plate, 30 mm hole, on the top rails above the legs.</text>
+<text x="1000.0" y="1318.0" class="t" text-anchor="start">  8. DRILL STATION -- ONE 10 mm bracket on top of the upright does both jobs:</text>
+<text x="1000.0" y="1336.0" class="t" text-anchor="start">     a half-round torque lug at its front edge, cut to the measured</text>
+<text x="1000.0" y="1354.0" class="t" text-anchor="start">     43 mm aux-handle collar, and a 46 mm flat behind it</text>
+<text x="1000.0" y="1372.0" class="t" text-anchor="start">     carrying the printed saddle.  The LUG IS THE ONLY TORQUE PATH; the printed</text>
+<text x="1000.0" y="1390.0" class="t" text-anchor="start">     saddle clamps and nothing else.  Weld both drill braces -- unbraced, that</text>
+<text x="1000.0" y="1408.0" class="t" text-anchor="start">     upright sags 2.4 mm under the 1160 N reaction and the drill cocks.</text>
+<text x="1000.0" y="1426.0" class="t" text-anchor="start">  9. Paint everything.  Mask the clamp-plate faces -- they are gasket faces.</text></svg>

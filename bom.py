@@ -7,9 +7,12 @@ The owner shops both sides of the US/MX border, so each line carries a US
 (McMaster / Grainger / big-box) and an MX (ferreteria / tornillo y aceros)
 equivalent where the two differ.
 """
-import os
+import os, sys
 from math import pi
 import params as P
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "calcs"))
+import pump_calcs as C          # quantities come from the calcs, never retyped
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -41,6 +44,9 @@ PURCHASED = [
  ("Whip checks", 2, "hose-to-hose safety cable, 1\" hose",
   "Dixon WS2", "cable de seguridad para manguera", 9),
  ("Half coupling, discharge", 1, "1\" NPT 3000# forged steel", "hardware store", "media copla 1\" cedula 80", 8),
+ ("Half couplings, POST PORTS", P.n_posts, "1\" NPT 3000# forged steel, one per post. "
+  "Welds to a FLAT face of the square PTR -- no saddle cut, no fish-mouth.",
+  "hardware store", "media copla 1\" cedula 80", 8),
  ("Half coupling, gauge", 1, "1/4\" NPT 3000# forged steel", "hardware store", "media copla 1/4\"", 4),
  ("Half coupling, grease", 1, "1/8\" NPT 3000# forged steel", "hardware store", "media copla 1/8\"", 4),
  ("Grease nipple", 1, "1/8\" NPT straight zerk", "hardware store", "grasera 1/8\"", 3),
@@ -77,7 +83,8 @@ def _pipe(nom, od, idd, L, n=1):
 def fabricated():
     F = []
     A = F.append
-    A(("Barrel", 1, f"owner's 3\" tube {P.barrel_od:.1f} OD x {P.barrel_wall:.2f} wall",
+    A(("Barrel (ROUND tube -- not post stock)", 1,
+       f"owner's round tube {P.barrel_od:.1f} OD x {P.barrel_wall:.2f} wall",
        f"cut {P.barrel_len:.0f} mm. Slot {P.barrel_slot_l:.0f} x {P.barrel_slot_w:.0f} in the "
        f"top (developed width 54.5 -- use barrel_slot_wrap_template.dxf)"))
     A(("Adapter plate", 1, f"{P.plate_t:.0f} mm plate",
@@ -198,6 +205,13 @@ def render():
     w(f"\nWithout the rotor/stator set (owner already bought it): "
       f"**${tot - 320}**.\n")
 
+    w(f"\n> **Two different 3\" stocks.**  The pump barrel is ROUND tube "
+      f"({P.barrel_od:.1f} OD x {P.barrel_wall:.2f}).  The twelve posts are "
+      f"SQUARE PTR\n> ({P.post_side:.1f} across flats x {P.post_wall:.2f}).  "
+      f"Measure both; they are separate purchases and `params.py` keeps them in\n"
+      f"> separate blocks with no cross-reference.  The square bore holds "
+      f"{C.post_vol_L:.1f} L per post,\n> 27% more than round tube of the same "
+      f"nominal size, and the cement order follows from it.\n")
     w("\n## 2. Fabricated -- steel\n")
     w("Every DXF named here is in `out/`.  Cut lengths are square cuts unless stated.\n")
     w("| Item | Qty | Stock | Cut / operations |")
@@ -258,9 +272,12 @@ def render():
                  ("Gland follower + lantern ring", "2 spare each"),
                  ("3 mm nitrile gaskets", "4 spare"),
                  ("Printed auger set", "1 spare set (see print manifest)"),
-                 ("Cement (see calcs section 10)", "4 sacks of 50 kg"),
-                 ("Sand, sieved <= 3 mm", "~380 kg"),
-                 ("Water", "~95 L, plus 200 L for flushing")]:
+                 (f"Cement -- {P.n_posts} x {P.post_shape} posts, "
+                  f"{C.post_vol_L:.1f} L each",
+                  f"{C.cement_kg:.0f} kg = {C.sacks:.1f} sacks of 50 kg"),
+                 ("Sand, sieved <= 3 mm through the printed screen",
+                  f"~{C.sand_kg:.0f} kg"),
+                 ("Water", f"~{C.water_L:.0f} L, plus 200 L for flushing")]:
         w(f"| {n} | {q} |")
     w("")
     return "\n".join(L)
