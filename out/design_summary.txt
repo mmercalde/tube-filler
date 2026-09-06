@@ -1,0 +1,212 @@
+==============================================================================
+  TUBE-FILLER -- D6-3 ROTOR/STATOR GROUT PUMP -- DESIGN SUMMARY
+==============================================================================
+
+==============================================================================
+1  THE JOB
+==============================================================================
+  post internal volume                             23.2 L  (76 OD x 3.05 wall x 6 m)
+  x 12 posts                                        278 L  
+  + hose hold-up                                    4.1 L  (8 m of 1")
+  grout to mix (10% waste)                          310 L  
+  ! The brief assumed ~27 L/post.  76.2 x 3.05 x 6 m holds 23.2 L.
+    Re-measure the post wall before ordering cement; at cal-11 the job is 278 L, not 324 L.
+
+==============================================================================
+2  PUMP SPEED AND FLOW
+==============================================================================
+  drive                                       900 W drill  1/2" chuck on the hex stub, low range (0-550 rpm)
+  rotor speed                                     250 rpm  direct -- no reducer, no coupling
+  displacement                                 50 cm3/rev  vendor spec
+  flow                                        12.50 L/min  
+  fill time per post                             1.85 min  12 posts = 22 min of pumping
+
+==============================================================================
+3  PRESSURE REQUIRED AT THE PUMP OUTLET
+==============================================================================
+  static head                                    1.24 bar  6 m of SG 2.1
+  hose friction (8 m of 1")                      1.66 bar  Bingham tau0=100 Pa, mu=0.1 Pa.s
+  valve + port losses                            0.20 bar  
+  TOTAL REQUIRED                                 3.10 bar  OK, >= 2 bar spec met
+  hose velocity / Bingham Re               0.41 m/s / 219  laminar
+
+  Sensitivity -- required outlet pressure [bar] vs grout stiffness & hose length:
+      tau0 [Pa] |       4 m       6 m       8 m      12 m      20 m
+      ----------+---------------------------------------------
+             50 |     1.91     2.14     2.38     2.85     3.79
+            100 |     2.27     2.68     3.10     3.92     5.58
+            200 |     2.96     3.72     4.48     6.01     9.06
+            300 |     3.64     4.74     5.84     8.05    12.46
+  -> Hose length is the single biggest lever you control on site.
+  -> Anything above 6 bar exceeds the joint design point:
+     thin the mix or shorten the hose, do not push the pump harder.
+
+==============================================================================
+4  TORQUE BUDGET AND DRIVE MARGIN  -- 900 W DRILL
+==============================================================================
+  stator friction (ASSUMED)                      22.6 N.m  <-- A GUESS.  Measure it: test_plan W-4
+  packed gland, run loose                         2.5 N.m  vs 5.0 at normal service preload
+  feed auger                                      1.0 N.m  
+  pressure @ 3.10 bar                             2.5 N.m  = dP.V/2pi
+  TOTAL AT DUTY                                  28.6 N.m  (748 W at the rotor)
+
+  drill continuous                               15.0 N.m  at 250 rpm
+  drill burst / breakaway                        25.0 N.m  
+  MARGIN ON CONTINUOUS                             0.53 x  want >= 1.30
+  margin on burst                                  0.88 x  
+
+  VERDICT: SHORTFALL AT THE ASSUMED FRICTION.  Read the next block before
+  concluding the machine does not work -- the assumption, not the drill, is
+  what is unproven.
+
+  WHAT ACTUALLY DECIDES THIS -- the stator friction, which nobody has measured:
+
+      stator friction |  total at duty |  drill cont.  |  drill burst  | stalls at
+        [N.m]         |     [N.m]      |    15 N.m     |    25 N.m     |   [bar]
+      ----------------+----------------+---------------+---------------+----------
+                  3.0 |            9.0 |     OK        |     OK        |     23.2
+                  5.0 |           11.0 |     OK        |     OK        |     20.7
+                  6.5 |           12.5 |     burst     |     OK        |     18.8
+                  8.0 |           14.0 |     burst     |     OK        |     17.0
+                 10.0 |           16.0 |     burst     |     OK        |     14.5
+                 15.0 |           21.0 |     burst     |     OK        |      8.2
+                 20.0 |           26.0 |     no        |     no        |      1.9
+                 22.6 |           28.6 |     no        |     no        |      0.0
+
+  max stator friction, continuous                 9.0 N.m  (and only 7.0 with 1.30x margin)
+  max stator friction, burst                     19.0 N.m  breakaway only
+  ...if the gland is run tight                    6.5 N.m  the gland alone costs 2.5 N.m -- run it weeping
+
+  So: the drill drives this pump if and only if the stator's running friction
+  comes in at or below about 9 N.m.  That is not an unreasonable
+  number for a wetted D6-3 at light interference -- and the fact that the vendor
+  sells a DRILL-HEAD rotor variant says the manufacturer expects exactly this.
+  But it is not proven.  Measure it on water (test_plan W-4) BEFORE mixing grout.
+
+  Three levers, in order of effect, if the measured friction comes in high:
+    1. BREAK-IN SPACERS.  Fit the 0.5 mm-crush spacer set and run cement milk
+       for 30 min.  Interference torque falls as the rubber beds in.  This is
+       the big one and it costs four pipe offcuts.
+    2. Run the gland weeping, not dry.  Worth ~2.5 N.m.
+    3. Shorten the hose and thin the mix.  Worth ~1 N.m -- least effect, because
+       friction, not pressure, dominates this budget.
+  If it still will not carry it: the upgrade path is 64 N.m at 193 rpm
+  on the SAME hex stub -- see README section 11.
+
+==============================================================================
+5  AUGER FEED MATCH
+==============================================================================
+  flight annulus                                 1508 mm2  OD 62 / hub 44
+  pitch                                           65.0 mm  = 1.05 x OD
+  segments                               4 x 130 + 1 x 65  9 pitches span the barrel exactly
+  swept volume @ eta=0.75                      67 cm3/rev  
+  OVERFEED RATIO                                   1.33 x  target >= 1.30
+  starves below fill factor                          0.56  print the 84 mm-pitch spares if it does
+
+==============================================================================
+6  AXIAL THRUST -- rotor pushes the shaft REARWARD
+==============================================================================
+  thrust at duty (3.10 bar)                         608 N  
+  thrust at 6 bar +30%                             1532 N  sized on the stator inlet bore
+  UCP207 axial capacity                            5100 N  = 0.2 x C
+  margin                                            3.3 x  PASS
+  Both pillow blocks get their collars locked; the REAR one takes the thrust.
+
+==============================================================================
+7  STATOR CLAMP -- tie rods over hard-stop spacers
+==============================================================================
+  gasket seating force                             5503 N  3 mm elastomer, y=1.4 MPa
+  separating force @ 6 bar                         1299 N  
+  minimum total clamp                              6802 N  = 1701 N/rod = 3.4 N.m
+  RECOMMENDED preload                         10000 N/rod  = 20 N.m dry on M10 8.8
+  rod stress at recommended                       172 MPa  vs 640 MPa proof (8.8)
+  spacer stress                                    46 MPa  3/4" sch40, 217 mm2
+  spacer cut length                              268.0 mm  = stator_len - crush; HARD STOP
+  The spacers, not the rubber, carry the preload.  This is the whole point:
+  you cannot over-crush the stator no matter how hard you pull the rods, and
+  over-crushing is what kills a PC stator (bore closes, torque spikes, burns).
+
+==============================================================================
+8  DRIVE SHAFT DEFLECTION  (why the shaft is 35 mm)
+==============================================================================
+  unsupported overhang                             770 mm  front pillow block -> rotor joint
+  deflection, self weight                         0.35 mm  
+  deflection, 150 N side load                     1.55 mm  
+  TOTAL                                           1.90 mm  
+  auger radial clearance                          4.00 mm  margin 2.1 x PASS
+
+==============================================================================
+8b  ROTOR ARTICULATION
+==============================================================================
+  eccentricity (measured input)                    4.5 mm  see README: V-block + DTI
+  con-rod length                                   140 mm  
+  length / eccentricity                              31.1  want >= 20
+  joint angle swept                              1.84 deg  each fork gets 0.5 mm of slop; grease and boot it
+  The two forks are at 90 deg to each other.  A single cross pin is a 1-DOF
+  hinge; the rotor axis precesses on a cone, which needs 2.  Parallel forks
+  will bind and tear the rotor head off.  Check this on assembly by hand.
+
+==============================================================================
+9  STALL, OVERPRESSURE AND WHAT PROTECTS THE MACHINE
+==============================================================================
+  drill stalls the pump at                        0.0 bar  -- it cannot turn it at all
+
+      stator friction [N.m] |  pump stalls the drill at [bar]
+      ----------------------+--------------------------------
+                        3.0 |                       23.2
+                        5.0 |                       20.7
+                        6.5 |                       18.8
+                        8.0 |                       17.0
+                       10.0 |                       14.5
+                       15.0 |                        8.2
+
+  This is the drill's one clear win over the motor it replaced.  A 1.5 kW motor
+  on a 7.5:1 worm does not stall until roughly 140 bar -- twenty times the
+  6 bar these joints are built for.  A 900 W drill stalls far sooner, and at
+  low measured friction it stalls inside or near the design envelope.  The
+  drive is now part of the protection instead of a liability.
+
+  It is still not ENOUGH protection.  Keep all of it:
+    1. 0-16 bar glycerin gauge on the discharge head, red band at 6 bar.
+    2. 1" manual bypass ball valve back to the hopper.  It is the relief valve.
+    3. Hose rated >= 40 bar working, crimped ends, whip checks.
+    4. 30 mA RCD on the supply.  A hand drill in a wet steel machine has no
+       earthed frame of its own and no overload relay.  The RCD is the only
+       electrical protection on this build -- do not omit it.
+
+  AND the shutdown rule, which is different from the motor version:
+    CLOSE THE DISCHARGE VALVE, THEN RELEASE THE TRIGGER.  In that order.
+    A drill freewheels when you let go -- there is no gearbox holding anything.
+    The 1.24 bar column in the post will drive the rotor backwards and
+    drain itself into the hopper, and you will not see it happen.
+
+==============================================================================
+10  MATERIALS FOR THE POUR
+==============================================================================
+  grout to mix                                      310 L  1:2 cement:sand, w/c 0.50
+  cement                                           186 kg  = 3.7 sacks of 50 kg
+  sand (sieved <= 3 mm)                            372 kg  
+  water                                              93 L  
+  hopper holds                                       44 L  = 1.9 posts per load
+
+==============================================================================
+ACCEPTANCE CHECKS
+==============================================================================
+  [PASS]  delivery pressure >= 2 bar
+  [PASS]  auger overfeed >= 1.30x
+  [PASS]  thrust margin >= 2x
+  [PASS]  shaft deflection < clearance/1.5
+  [PASS]  tie-rod preload below proof
+  [PASS]  hose flow laminar
+  [PASS]  one hopper load >= one post
+  [PASS]  con-rod length >= 20 x ecc
+  [PASS]  no dead annulus at the gland
+  [SHORTFALL]  drive margin on continuous torque (0.53x, want 1.30x)
+
+  The drive line is a VERDICT, not a gate.  It is reported and the build
+  proceeds, because the input it depends on (T_stator_friction) is a guess
+  and refusing to emit CAD over a guess helps nobody.  Everything else is
+  a hard check and does gate the build.
+
+  All hard criteria met.  DRIVE: SHORTFALL -- see section 4.
+==============================================================================
