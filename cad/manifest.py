@@ -5,15 +5,25 @@ Columns: stl name, factory, qty, group, material, walls, infill %,
          print orientation, life, note
 """
 from _common import *
-import printed, jigs, ops
+import printed, jigs, ops, coupons
 
 RHO = {"PETG": 1.27, "ASA": 1.07}          # g/cm3
-V, J, O = "WETTED", "FAB JIG", "OPERATIONAL"
+V, J, O, C = "WETTED", "FAB JIG", "OPERATIONAL", "FIT COUPON"
+
+# Models that are legitimately more than one solid.  None = any count.
+EXPECT_SOLIDS = {"joint_boot_clamp": 2, "fit_coupons": None}
 
 
 def _reg():
     R = []
     a = R.append
+    # ---------------- fit coupons: PRINT THESE FIRST -----------------------
+    a(("fit_coupons", coupons.plate, 1, C, "PETG", 3, 30,
+       "as laid out -- each coupon is already in its parent part's orientation",
+       "print first, then discard",
+       "20 coupons on one plate: 5 rungs each of the auger bore, the post "
+       "corner channel, a template drill bushing and the dust-cap barb. "
+       "Try every rung on real stock, then set print_clearance."))
     # ---------------- wetted / machine parts (unchanged rules) --------------
     a((f"auger_segment_p{P.auger_pitch:.0f}", printed.auger_segment, P.n_auger_full,
        V, "PETG", 4, 100, "axis vertical, flat face down",
@@ -143,13 +153,55 @@ def render(rws):
     w("outdoors or against a warm drill.  Everything else is PETG.\n")
     w(f"Bed checked against {P.printer_x:.0f} x {P.printer_y:.0f} x {P.printer_z:.0f} mm "
       f"(`printer_x/y/z` in params.py -- confirm against your machine).\n")
+    w("\n## Fit tuning -- do this before you batch anything\n")
+    w("Every printed feature that has to fit real steel is derived from **one**")
+    w("number, so one measurement retunes the whole project:\n")
+    w("| parameter | now | governs |")
+    w("|---|--:|---|")
+    w(f"| `print_clearance` | {P.print_clearance:.2f} mm | DIAMETRAL clearance of a "
+      "printed feature over real stock: auger bore on the shaft, jig register faces "
+      "on the tube and on the square post, drill bushings on the bit, cradle on the "
+      "stator, drill saddle on the drill body, gland follower in its box, PTR weld "
+      "fixtures. Applied as half of it where the feature is a face or a radius. |")
+    w(f"| `print_interference` | {P.print_interference:.2f} mm | DIAMETRAL "
+      "*oversize* of a printed barb that must grip -- the NPT dust caps, and nothing "
+      "else. Tuned in the opposite direction. |")
+    w(f"| `running_clearance` | {P.running_clearance:.2f} mm | NOT a fit: the gap in "
+      "a printed bore around something that turns in it (gland follower and lantern "
+      "ring on the rotating shaft sleeve). Do not tune this from a coupon. |")
+    w(f"\n`fit_coupons.stl` is a ladder of five rungs either side of each, "
+      f"{P.print_clearance_step:.2f} mm apart, every rung embossed with its own value:\n")
+    w("| tag | coupon | test it on | looking for |")
+    w("|---|---|---|---|")
+    w(f"| `A` | auger hub bore + cross-pin hole | the real {P.shaft_dia:.0f} mm shaft "
+      f"and a {P.xpin_dia:.0f} mm pin | slides on by hand, no rock |")
+    w(f"| `P` | post-jig corner channel | a real {P.post_side:.1f} square PTR corner "
+      "| both faces touch, no rock, comes off by hand |")
+    w(f"| `B` | template drill bushing | the real {P.tie_rod_hole:.0f} mm bit | spins "
+      "freely, no perceptible wobble. **This is the tightest use in the project** -- "
+      "if one rung is snug here and loose elsewhere, this is the rung that decides. |")
+    w("| `C` | dust-cap barb | a real 1\" NPT half coupling | firm thumb to seat, "
+      "stays put upside down |")
+    w(f"\n> **Mesh tolerance is part of the fit.** Every STL here is meshed at "
+      f"`stl_tolerance` = {P.stl_tolerance:.2f} mm chordal, which makes a bore an\n"
+      f"> inscribed polygon up to {2*P.stl_tolerance:.2f} mm small on diameter. That "
+      f"cancels -- coupons and parts\n> mesh identically, so a coupon measures the "
+      f"faceting along with everything else --\n> but only while the number is the "
+      f"same for both. **Changing `stl_tolerance` invalidates a\n> measured "
+      f"`print_clearance`.** Re-run the coupons if you touch it.\n")
+    w("Each coupon is modelled in the same print orientation as the part it stands")
+    w("for -- the auger bore vertical, the corner channel on its 45-degree corner, the")
+    w("bushing flat. A fit measured in one orientation does not transfer to another.\n")
+    w("Then: **edit two numbers, re-run the build, and batch.**\n")
     w("\n> **The rule, unchanged:** printed parts GUIDE, FEED, ALIGN, SCREEN, COVER and")
     w("> SEAL-ASSIST.  None of them contains pressure or carries structural load.  The")
     w("> fab jigs are shop tools: none of them stays in the pressure path, and the two")
     w("> PTR weld fixtures are sacrificial and must be off the work before weld-out.\n")
 
     tot_mass = tot_time = 0.0
-    for grp, blurb in ((V, "On the machine, in contact with grout. Existing parts, "
+    for grp, blurb in ((C, "One plate, printed and tested BEFORE anything else. "
+                           "See the fit-tuning section above."),
+                       (V, "On the machine, in contact with grout. Existing parts, "
                            "unchanged by the drill conversion."),
                        (J, "One-time shop tools. None of these is on the finished "
                            "machine."),
@@ -186,6 +238,13 @@ def render(rws):
       f"is one-time fab jigs** that do not stay on the machine.  That is the price of")
     w("  drilling 24 post holes and a hopper slot right the first time.")
     w("\n## Print order\n")
+    w("0. **`fit_coupons` first, before anything else.** One plate, about an hour.")
+    w("   Try every rung on the real shaft, the real PTR corner, the real drill bit")
+    w("   and a real 1\" coupling. Put the values that fit into `print_clearance` and")
+    w("   `print_interference` in `params.py`, re-run `python cad/build_all.py`, and")
+    w(f"   only then start batching. A wrong clearance found on part 40 of "
+      f"{sum(r['qty'] for r in rws)} is")
+    w("   several kilos of filament and a weekend.")
     w("1. **Jigs first.** `jig_barrel_hopper_slot`, both `jig_barrel_*` rings and the")
     w("   three 1:1 templates, before you cut any steel. `gauge_tie_rod_spacers` before")
     w("   you cut the spacers -- that gauge is what stops you crushing the stator.")

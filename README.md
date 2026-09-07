@@ -49,6 +49,7 @@ tube-filler/
     build_all.py         <-- run this
     manifest.py          the print registry: drives BOTH the STL export and
                          out/print_manifest.md, so they cannot disagree
+    coupons.py           the fit-coupon ladders (print these first)
     verify.py            geometry self-checks; nothing exports if one fails
     assembly.py          places every component at its params station; emits the
                          STEP assembly and the iso view, and runs the clash check
@@ -58,7 +59,8 @@ tube-filler/
   out/                 EVERYTHING GENERATED: STEP, STL, DXF, SVG, PDF
     machine_assembly.step  the whole machine, one named body per component
     assembly_iso.png       hidden-line isometric of the same
-    print_manifest.md    28 models / 56 parts: material, walls, infill,
+    fit_coupons.stl      20 fit coupons on one plate -- print before batching
+    print_manifest.md    29 models / 53 parts: material, walls, infill,
                          orientation, consumable vs one-time jig
   BOM.md               generated
   test_plan.md         water -> cement milk -> grout, with abort criteria
@@ -113,6 +115,8 @@ geometry around it is right, the number is a guess. Measure, edit, re-run.
 | `post_side` (or `post_od` if round) | The post jigs parametrize on this. Stock that measures 75.4 instead of 76.2 costs one reprint, not a scrapped hole. Setting `post_shape` switches both post jigs between a corner channel and a V-saddle. |
 | `bucket_rim_od` | Your 5-gal bucket. Sets the sand-screen frame. |
 | `printer_x/y/z` | Your H2C build volume. `verify.py` refuses to emit a part that will not fit. |
+| **`print_clearance`** | **Measured, not guessed — from `out/fit_coupons.stl`.** One number (0.25 mm diametral by default) governs every printed feature that has to fit real steel. Print the coupon ladder, find the rung that fits, put it here. See §5.0. |
+| `print_interference` | Same idea, opposite direction: the oversize on the NPT dust-cap barbs, which must grip. Its own coupon rung. |
 
 ---
 
@@ -239,7 +243,42 @@ forks parallel, the joint binds and tears the rotor head off.
 
 Nothing here needs a machine tool. Rough times are for one person.
 
-### 5.0 Print the jigs first (before you cut any steel)
+### 5.0 Print the fit coupons first (before you print anything else)
+
+`out/fit_coupons.stl` is one plate, about an hour: **twenty coupons, four
+ladders of five rungs**, each rung embossed with its own value.
+
+| tag | coupon | try it on | want |
+|---|---|---|---|
+| `A` | auger hub bore + cross-pin hole | the real 35 mm shaft and a 6 mm pin | slides on by hand, no rock |
+| `P` | post-jig corner channel | a real square PTR corner | both faces touch, no rock, comes off by hand |
+| `B` | template drill bushing | the real 11 mm bit | spins freely, no perceptible wobble |
+| `C` | dust-cap barb | a real 1" NPT half coupling | firm thumb to seat, stays put upside down |
+
+Put the values that fit into `print_clearance` and `print_interference` in
+`params.py`, re-run `make`, and only then batch. **Every printed mating feature
+in the project is derived from those two numbers**, so one measurement retunes
+all 53 parts — the auger bore, the jig register faces on tube and on square
+post, the drill bushings, the cradle on the stator, the saddle on the drill
+body, the gland follower, the PTR weld fixtures.
+
+`B` is the tightest use in the project: if one rung is snug there and loose
+everywhere else, that rung is the one that decides.
+
+Each coupon prints in the same orientation as the part it stands for — the
+auger bore vertical, the corner channel on its 45° corner, the bushing flat. A
+fit measured in one orientation does not transfer to another; first-layer
+squish and seam placement are not the same on a 45° face as on a flat one.
+
+A wrong clearance found on part 40 of 53 costs several kilos of filament and a
+weekend. This plate costs an hour.
+
+> **Not everything printed is a "fit".** `running_clearance` (0.80 mm) is the
+> gap in the gland follower and lantern ring around the *rotating* shaft
+> sleeve. That is a gap, not a fit, and it is deliberately kept out of the
+> coupon loop — do not tune it from a coupon result.
+
+### 5.1 Print the jigs next (before you cut any steel)
 `out/print_manifest.md` lists all 28 models with material, walls, infill,
 orientation and whether each is a consumable or a one-time jig. Print order is
 in that file. In particular:
@@ -260,13 +299,13 @@ in that file. In particular:
 
 No printed jig stays on the machine and none is in the pressure path.
 
-### 5.1 Frame (one day)
+### 5.2 Frame (one day)
 Cut list and weld notes are on `out/frame_weldment.svg` (also .png/.pdf).
 Tack the whole skid, check the diagonals equal within 2 mm, then weld out.
 **Weld the top rails last, with the barrel clamped in its saddles** — the
 barrel, not the frame, is the alignment datum for the whole machine.
 
-### 5.2 Barrel and plates (one day)
+### 5.3 Barrel and plates (one day)
 1. Cut the barrel to 600 mm, square both ends.
 2. Wrap `barrel_slot_wrap_template.dxf` around it, centre-punch, chain-drill
    and grind the 200 × 50 slot. The template's width is the **developed arc**
@@ -283,7 +322,7 @@ barrel, not the frame, is the alignment datum for the whole machine.
    coupling, gauge boss. Keep the bores concentric — a 20 mm bolt through them
    while tacking works.
 
-### 5.3 Drive train (one day)
+### 5.4 Drive train (one day)
 1. Cut the 35 mm shaft. Drill the auger cross holes at the spacing given in
    `BOM.md` (with the shipped defaults: five holes at 130/130/130/130/65) using `auger_pin_drill_jig.stl` — the jig clamps to
    the shaft and puts every hole on the same clock angle. Drill the 8 mm
@@ -326,12 +365,15 @@ standard nut of the measured across-flats size inside a short tube — then the
 *rear* fork alone provides only 1 DOF, so add a second cross pin at 90° in the
 socket tube. Set `rotor_joint = "drill_hex"` and `rotor_hex_af` in `params.py`.
 
-### 5.4 Printing
+### 5.5 Printing
 Everything: material, walls, infill, orientation, quantity and print order is
-in **`out/print_manifest.md`** — 28 models, 56 parts, roughly 8 kg of filament
-across jigs, wetted parts and operational parts.
+in **`out/print_manifest.md`** — 29 models, 53 parts, roughly 7 kg of filament
+across coupons, jigs, wetted parts and operational parts.
 
-Two rules hold across all of them:
+Three rules hold across all of them:
+
+- **Coupons before batch.** §5.0. Two numbers in `params.py` drive every
+  printed fit; measure them once.
 
 - **No supports on anything.** Every model is emitted in its print orientation
   and every overhang is at 45° or steeper. The auger flight self-supports (97%

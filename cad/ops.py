@@ -208,12 +208,14 @@ def npt_dust_cap():
     # 1" NPT female thread minor.  This is the COUPLING bore, not the hole in
     # the post, so it is unaffected by post_shape -- square or round, the cap
     # plugs the same fitting.
-    bore = 26.6
+    bore = P.npt1_bore
     body = extrude(Circle(42 / 2), amount=4.0)
-    body += Pos(0, 0, 4) * extrude(Circle(bore / 2 - 0.5), amount=16)
+    body += Pos(0, 0, 4) * extrude(
+        Circle((bore - P.print_clearance) / 2), amount=16)          # pilot: a fit
     for i in range(3):              # sealing/gripping barbs
         body += Pos(0, 0, 4 + 4 + i * 5) * extrude(
-            Circle(bore / 2 + 0.25) - Circle(bore / 2 - 1.2), amount=2.0)
+            Circle((bore + P.print_interference) / 2)
+            - Circle(bore / 2 - 1.2), amount=2.0)                   # barb: a grip
     body += Pos(30, 0, 0) * Box(26, 20, 4.0,
                                 align=(Align.CENTER, Align.CENTER, Align.MIN))
     body -= Pos(38, 0, -1) * extrude(Circle(2.6), amount=6)
@@ -232,10 +234,11 @@ def packing_cone():
     top_id = box_id + 2 * P.packing_sq * 0.35
     H, spig = 34.0, 7.0
     body = extrude(Circle(box_od / 2 + 6), amount=H)
-    body += Pos(0, 0, -spig) * extrude(Circle(box_id / 2 - 0.4), amount=spig)
+    body += Pos(0, 0, -spig) * extrude(
+        Circle((box_id - P.print_clearance) / 2), amount=spig)
     body -= Pos(0, 0, -spig - 1) * (
-        loft([Plane.XY.offset(-spig - 1) * Circle(box_id / 2 - 0.35),
-              Plane.XY.offset(0) * Circle(box_id / 2 - 0.35),
+        loft([Plane.XY.offset(-spig - 1) * Circle((box_id - P.print_clearance) / 2),
+              Plane.XY.offset(0) * Circle((box_id - P.print_clearance) / 2),
               Plane.XY.offset(H + 1) * Circle(top_id / 2)]))
     body += _emboss("PACKING GUIDE", 5.0, 0, box_od / 2, H)
     return body.clean()
@@ -247,8 +250,8 @@ def packing_drift():
 
     Drive each ring home with a mallet on this, not with the gland plate --
     the gland plate is for the last 2 mm, not for seating four rings."""
-    od = P.gland_box_id - 0.6
-    idd = P.sleeve_od + 1.2
+    od = P.gland_box_id - P.print_clearance
+    idd = P.sleeve_od + P.running_clearance
     L = 120.0
     ring = extrude(Circle(od / 2) - Circle(idd / 2), amount=L)
     ring += Pos(0, 0, L) * extrude(Circle(od / 2 + 12) - Circle(idd / 2), amount=8)

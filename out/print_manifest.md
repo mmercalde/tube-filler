@@ -10,10 +10,54 @@ outdoors or against a warm drill.  Everything else is PETG.
 Bed checked against 350 x 320 x 325 mm (`printer_x/y/z` in params.py -- confirm against your machine).
 
 
+## Fit tuning -- do this before you batch anything
+
+Every printed feature that has to fit real steel is derived from **one**
+number, so one measurement retunes the whole project:
+
+| parameter | now | governs |
+|---|--:|---|
+| `print_clearance` | 0.25 mm | DIAMETRAL clearance of a printed feature over real stock: auger bore on the shaft, jig register faces on the tube and on the square post, drill bushings on the bit, cradle on the stator, drill saddle on the drill body, gland follower in its box, PTR weld fixtures. Applied as half of it where the feature is a face or a radius. |
+| `print_interference` | 0.50 mm | DIAMETRAL *oversize* of a printed barb that must grip -- the NPT dust caps, and nothing else. Tuned in the opposite direction. |
+| `running_clearance` | 0.80 mm | NOT a fit: the gap in a printed bore around something that turns in it (gland follower and lantern ring on the rotating shaft sleeve). Do not tune this from a coupon. |
+
+`fit_coupons.stl` is a ladder of five rungs either side of each, 0.10 mm apart, every rung embossed with its own value:
+
+| tag | coupon | test it on | looking for |
+|---|---|---|---|
+| `A` | auger hub bore + cross-pin hole | the real 35 mm shaft and a 6 mm pin | slides on by hand, no rock |
+| `P` | post-jig corner channel | a real 76.2 square PTR corner | both faces touch, no rock, comes off by hand |
+| `B` | template drill bushing | the real 11 mm bit | spins freely, no perceptible wobble. **This is the tightest use in the project** -- if one rung is snug here and loose elsewhere, this is the rung that decides. |
+| `C` | dust-cap barb | a real 1" NPT half coupling | firm thumb to seat, stays put upside down |
+
+> **Mesh tolerance is part of the fit.** Every STL here is meshed at `stl_tolerance` = 0.02 mm chordal, which makes a bore an
+> inscribed polygon up to 0.04 mm small on diameter. That cancels -- coupons and parts
+> mesh identically, so a coupon measures the faceting along with everything else --
+> but only while the number is the same for both. **Changing `stl_tolerance` invalidates a
+> measured `print_clearance`.** Re-run the coupons if you touch it.
+
+Each coupon is modelled in the same print orientation as the part it stands
+for -- the auger bore vertical, the corner channel on its 45-degree corner, the
+bushing flat. A fit measured in one orientation does not transfer to another.
+
+Then: **edit two numbers, re-run the build, and batch.**
+
+
 > **The rule, unchanged:** printed parts GUIDE, FEED, ALIGN, SCREEN, COVER and
 > SEAL-ASSIST.  None of them contains pressure or carries structural load.  The
 > fab jigs are shop tools: none of them stays in the pressure path, and the two
 > PTR weld fixtures are sacrificial and must be off the work before weld-out.
+
+
+## FIT COUPON
+
+One plate, printed and tested BEFORE anything else. See the fit-tuning section above.
+
+| STL | Qty | Mat | Walls | Infill | Orientation | Life | Solid cm3 | Est. g ea |
+|---|--:|---|--:|--:|---|---|--:|--:|
+| `fit_coupons.stl` | 1 | PETG | 3 | 30% | as laid out -- each coupon is already in its parent part's orientation | print first, then discard | 257 | 215 |
+
+- **fit_coupons** -- 20 coupons on one plate: 5 rungs each of the auger bore, the post corner channel, a template drill bushing and the dust-cap barb. Try every rung on real stock, then set print_clearance.
 
 
 ## WETTED
@@ -22,13 +66,13 @@ On the machine, in contact with grout. Existing parts, unchanged by the drill co
 
 | STL | Qty | Mat | Walls | Infill | Orientation | Life | Solid cm3 | Est. g ea |
 |---|--:|---|--:|--:|---|---|--:|--:|
-| `auger_segment_p74.stl` | 2 | PETG | 4 | 100% | axis vertical, flat face down | consumable | 114 | 145 |
-| `auger_scavenger_p74_L74.stl` | 1 | PETG | 4 | 100% | axis vertical | consumable | 66 | 84 |
-| `auger_segment_p124_SPARE.stl` | 2 | PETG | 4 | 100% | axis vertical | spare | 108 | 137 |
-| `gland_follower.stl` | 3 | PETG | 4 | 100% | shoulder down | consumable | 45 | 57 |
+| `auger_segment_p74.stl` | 2 | PETG | 4 | 100% | axis vertical, flat face down | consumable | 117 | 149 |
+| `auger_scavenger_p74_L74.stl` | 1 | PETG | 4 | 100% | axis vertical | consumable | 68 | 86 |
+| `auger_segment_p124_SPARE.stl` | 2 | PETG | 4 | 100% | axis vertical | spare | 111 | 141 |
+| `gland_follower.stl` | 3 | PETG | 4 | 100% | shoulder down | consumable | 45 | 58 |
 | `lantern_ring.stl` | 3 | PETG | 4 | 100% | flat | consumable | 16 | 20 |
-| `stator_cradle.stl` | 1 | ASA | 4 | 40% | saddle up, flat base down | permanent | 841 | 468 |
-| `stator_strap.stl` | 1 | ASA | 4 | 40% | arch up as modelled | permanent | 397 | 231 |
+| `stator_cradle.stl` | 1 | ASA | 4 | 40% | saddle up, flat base down | permanent | 854 | 473 |
+| `stator_strap.stl` | 1 | ASA | 4 | 40% | arch up as modelled | permanent | 399 | 232 |
 | `joint_boot_clamp.stl` | 2 | PETG | 3 | 40% | flat | permanent | 8 | 9 |
 
 - **auger_segment_p74** -- flight self-supports: 97% layer overlap. No supports.
@@ -47,16 +91,16 @@ One-time shop tools. None of these is on the finished machine.
 
 | STL | Qty | Mat | Walls | Infill | Orientation | Life | Solid cm3 | Est. g ea |
 |---|--:|---|--:|--:|---|---|--:|--:|
-| `jig_barrel_hopper_slot.stl` | 1 | PETG | 3 | 15% | vee mouth down, as modelled | one-time jig | 1973 | 650 |
+| `jig_barrel_hopper_slot.stl` | 1 | PETG | 3 | 15% | vee mouth down, as modelled | one-time jig | 1969 | 651 |
 | `jig_barrel_rear_flange.stl` | 1 | PETG | 3 | 20% | flat disc down | one-time jig | 166 | 115 |
 | `jig_barrel_tie_rods.stl` | 1 | PETG | 3 | 20% | flat disc down | one-time jig | 177 | 123 |
-| `jig_post_port.stl` | 1 | PETG | 3 | 15% | outer corner down, both legs at 45 deg | one-time jig | 441 | 194 |
-| `jig_post_vent.stl` | 1 | PETG | 3 | 15% | outer corner down, both legs at 45 deg | one-time jig | 351 | 155 |
+| `jig_post_port.stl` | 1 | PETG | 3 | 15% | outer corner down, both legs at 45 deg | one-time jig | 440 | 193 |
+| `jig_post_vent.stl` | 1 | PETG | 3 | 15% | outer corner down, both legs at 45 deg | one-time jig | 350 | 155 |
 | `template_adapter_plate.stl` | 1 | PETG | 3 | 20% | flat, bushings up | one-time jig | 78 | 73 |
 | `template_discharge_flange.stl` | 1 | PETG | 3 | 20% | flat, bushings up | one-time jig | 77 | 73 |
 | `template_barrel_rear_flange.stl` | 1 | PETG | 3 | 20% | flat, bushings up | one-time jig | 78 | 74 |
-| `fixture_ptr_corner_SACRIFICIAL.stl` | 2 | PETG | 3 | 20% | heel down as modelled | SACRIFICIAL | 416 | 226 |
-| `fixture_ptr_tee_SACRIFICIAL.stl` | 2 | PETG | 3 | 20% | flat, pockets up | SACRIFICIAL | 337 | 193 |
+| `fixture_ptr_corner_SACRIFICIAL.stl` | 2 | PETG | 3 | 20% | heel down as modelled | SACRIFICIAL | 413 | 224 |
+| `fixture_ptr_tee_SACRIFICIAL.stl` | 2 | PETG | 3 | 20% | flat, pockets up | SACRIFICIAL | 336 | 192 |
 | `gauge_tie_rod_spacers.stl` | 1 | PETG | 3 | 20% | flat | one-time jig | 350 | 210 |
 
 - **jig_barrel_hopper_slot** -- strapped V-saddle. Chain-drill 6.4 through every bushing.
@@ -78,15 +122,15 @@ On the machine, not wetted.
 
 | STL | Qty | Mat | Walls | Infill | Orientation | Life | Solid cm3 | Est. g ea |
 |---|--:|---|--:|--:|---|---|--:|--:|
-| `drill_cradle_saddle.stl` | 1 | ASA | 5 | 60% | foot down, cradle up | permanent | 242 | 189 |
-| `drill_cradle_strap.stl` | 1 | ASA | 5 | 60% | as modelled, teardrop bore down | permanent | 220 | 169 |
+| `drill_cradle_saddle.stl` | 1 | ASA | 5 | 60% | foot down, cradle up | permanent | 241 | 188 |
+| `drill_cradle_strap.stl` | 1 | ASA | 5 | 60% | as modelled, teardrop bore down | permanent | 217 | 167 |
 | `hopper_guard_tile.stl` | 4 | ASA | 4 | 30% | flat | permanent | 216 | 194 |
 | `sand_screen_frame.stl` | 1 | ASA | 4 | 30% | lip down | permanent | 335 | 280 |
 | `sand_screen_retainer.stl` | 1 | ASA | 4 | 30% | flat | permanent | 119 | 103 |
 | `hopper_funnel.stl` | 1 | ASA | 3 | 15% | small end down | permanent | 468 | 459 |
 | `npt_dust_cap.stl` | 12 | PETG | 3 | 30% | flange down | consumable | 16 | 13 |
-| `packing_cone.stl` | 1 | PETG | 4 | 40% | spigot down | permanent | 102 | 86 |
-| `packing_drift.stl` | 2 | PETG | 4 | 60% | flange up, split face down | permanent | 126 | 123 |
+| `packing_cone.stl` | 1 | PETG | 4 | 40% | spigot down | permanent | 101 | 86 |
+| `packing_drift.stl` | 2 | PETG | 4 | 60% | flange up, split face down | permanent | 131 | 127 |
 
 - **drill_cradle_saddle** -- CLAMPING LOAD ONLY. Torque goes through the steel lug and upright.
 - **drill_cradle_strap** -- line it with inner tube; you are clamping a plastic gearcase
@@ -101,15 +145,21 @@ On the machine, not wetted.
 
 ## Totals
 
-- **52 printed parts** in 28 distinct models.
-- Estimated filament: **6.6 kg** (at the listed infills; 'Est. g' is density x perimeter shell volume plus infill fraction of the remainder -- a budgeting number, not a slicer).
-- PETG **3.9 kg**, ASA **2.7 kg**.  Buy 5 kg and 4 kg: the auger set alone is a consumable you will reprint, and one
+- **53 printed parts** in 29 distinct models.
+- Estimated filament: **6.8 kg** (at the listed infills; 'Est. g' is density x perimeter shell volume plus infill fraction of the remainder -- a budgeting number, not a slicer).
+- PETG **4.1 kg**, ASA **2.7 kg**.  Buy 5 kg and 4 kg: the auger set alone is a consumable you will reprint, and one
   of the sacrificial weld fixtures will get too close to an arc.
 - Of that, **2.5 kg is one-time fab jigs** that do not stay on the machine.  That is the price of
   drilling 24 post holes and a hopper slot right the first time.
 
 ## Print order
 
+0. **`fit_coupons` first, before anything else.** One plate, about an hour.
+   Try every rung on the real shaft, the real PTR corner, the real drill bit
+   and a real 1" coupling. Put the values that fit into `print_clearance` and
+   `print_interference` in `params.py`, re-run `python cad/build_all.py`, and
+   only then start batching. A wrong clearance found on part 40 of 53 is
+   several kilos of filament and a weekend.
 1. **Jigs first.** `jig_barrel_hopper_slot`, both `jig_barrel_*` rings and the
    three 1:1 templates, before you cut any steel. `gauge_tie_rod_spacers` before
    you cut the spacers -- that gauge is what stops you crushing the stator.

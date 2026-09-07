@@ -76,6 +76,38 @@ hex_plug_t           = 10.0    # mm  weld plug between the sleeve and the hex ba
 hex_sleeve_len       = 60.0    # mm  1-1/4" pipe sleeve gripping the shaft
 hex_pin_dia          = 8.0     # mm  cross pin, stub sleeve to drive shaft
 
+# --- PRINTED FITS -- tune these from out/fit_coupons.stl --------------------
+# ONE number governs every printed feature that has to fit real stock: the
+# auger bore on the shaft, the jig register faces on the tube and on the square
+# post, the drill bushings on the bit, the cradle on the stator, the drill
+# saddle on the drill body, the gland follower in its box.  Print the coupon
+# ladder, find the step that fits, put that number here, reprint.  One edit
+# retunes every part.
+print_clearance      = 0.25    # mm DIAMETRAL, printed feature over real stock.
+                               # Applied as /2 where it is a face or a radius.
+print_clearance_step = 0.10    # mm  rung spacing on the coupon ladder
+
+# STL meshing.  A chordal tolerance t makes an inscribed polygon, so a meshed
+# BORE comes out up to 2t small on diameter -- at the old 0.05 that was 0.10 mm,
+# forty percent of one ladder rung.  It cancels out (coupons and parts mesh
+# identically, so a coupon measures the faceting along with everything else),
+# but only while this number is the same for both.  CHANGING IT INVALIDATES A
+# MEASURED print_clearance.  Coarser angular tolerance costs nothing
+# dimensionally and cuts the facet count 5x -- it only affects text and fillets.
+stl_tolerance        = 0.02    # mm chordal  -> 0.04 mm on a meshed diameter
+stl_angular          = 0.35    # rad
+
+# Two things that are NOT fits and are deliberately kept separate:
+running_clearance    = 0.80    # mm DIAMETRAL, printed bore around a part that
+                               # TURNS in it (gland follower and lantern ring
+                               # on the rotating shaft sleeve).  A gap, not a
+                               # fit -- do not tune it from a coupon.
+print_interference   = 0.50    # mm DIAMETRAL, printed barb that must GRIP
+                               # (the NPT dust caps).  Tuned by its own coupon
+                               # rung, in the opposite direction.
+npt1_bore            = 26.6    # mm  1" NPT female thread minor -- what the
+                               # dust cap plugs into.  Not a post dimension.
+
 # --- UPGRADE PATH -- documented, NOT fitted, NOT in the BOM total -----------
 # The motor + reducer bolt to the same hex stub via a bored coupling half.
 # calcs prints the upgrade line so the comparison stays honest.
@@ -348,7 +380,7 @@ cradle_plate_l  = 46.0
 x_drill_upright = x_torque_lug - 9.0 - cradle_plate_l / 2
 x_drill_cradle  = x_drill_upright                      # printed saddle: CLAMP ONLY
 cradle_wall     = 8.0           # printed saddle wall under the drill
-cradle_clr      = 0.4           # bore clearance on the drill body
+cradle_clr      = print_clearance / 2   # radial, on the drill body
 cradle_foot_t   = 12.0          # printed saddle foot onto the steel plate
 cradle_strap_t  = 10.0
 # height of the drill axis above the steel cradle plate, from the printed

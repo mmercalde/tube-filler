@@ -43,9 +43,9 @@ def auger_segment(pitch=None, seg_len=None):
         flight = pc if flight is None else flight.fuse(pc)
 
     body = hub.fuse(boss).fuse(flight).clean()
-    bore = extrude(Circle(P.shaft_dia / 2 + 0.30), amount=seg_len)      # 0.6 dia clearance
+    bore = extrude(Circle((P.shaft_dia + P.print_clearance) / 2), amount=seg_len)
     pin = (Rot(90, 0, 0) * Pos(0, (seg_len - P.auger_boss_len) / 2 + P.auger_boss_len / 2, -60)
-           * extrude(Circle((P.xpin_dia + 0.4) / 2), amount=120))
+           * extrude(Circle((P.xpin_dia + P.print_clearance) / 2), amount=120))
     return body.cut(bore).cut(pin).clean()
 
 
@@ -53,7 +53,9 @@ def lantern_ring():
     """Sits mid-stack in the packing.  Grease injected through the box wall
     reaches the shaft HERE and pushes grout back out of the box.  This is what
     keeps abrasive out of the packing; on a grout pump it is not optional."""
-    od, idd, L = P.gland_box_id - 0.6, P.sleeve_od + 0.6, P.lantern_len
+    od = P.gland_box_id - P.print_clearance          # fit: slides in the box
+    idd = P.sleeve_od + P.running_clearance          # gap: the sleeve turns
+    L = P.lantern_len
     body = extrude(Circle(od / 2) - Circle(idd / 2), amount=L)
     for i in range(8):
         body -= (Rot(0, 0, i * 45) * Pos(0, 0, L / 2) * Rot(90, 0, 0)
@@ -68,7 +70,9 @@ def gland_follower():
     """Anti-extrusion bushing.  The steel gland plate pushes this; this pushes
     the packing.  Fully supported inside the box bore -- pure compression, no
     pressure containment.  Consumable: reprint when the nose is chewed."""
-    od, idd, L = P.gland_box_id - 0.5, P.sleeve_od + 0.8, P.follower_len
+    od = P.gland_box_id - P.print_clearance          # fit: slides in the box
+    idd = P.sleeve_od + P.running_clearance          # gap: the sleeve turns
+    L = P.follower_len
     body = extrude(Circle(od / 2) - Circle(idd / 2), amount=L)
     body += Pos(0, 0, L) * extrude(Circle(68 / 2) - Circle(idd / 2), amount=6)
     # shoulder stays OUTSIDE the box: when it touches the box rim, repack.
@@ -79,7 +83,7 @@ def stator_cradle(height=None):
     """Non-structural.  The stator hangs off the tie rods; this only stops it
     drooping into a banana, which closes the bore and spikes the torque."""
     H = height if height is not None else P.stator_cradle_h
-    r = P.stator_od / 2 + 0.5
+    r = (P.stator_od + P.print_clearance) / 2
     w = P.stator_od + 150
     body = extrude(Rectangle(w, 90), amount=H)
     body -= Pos(0, 0, H) * Rot(90, 0, 0) * extrude(Circle(r), amount=200, both=True)
@@ -94,7 +98,8 @@ def stator_cradle(height=None):
     # stator at washout, so a closed channel costs nothing.
     for sx in (-1, 1):
         body -= (Pos(sx * P.tie_xy, 0, H - P.tie_xy) * Rot(90, 0, 0)
-                 * extrude(Circle((P.spacer_od + 2.0) / 2), amount=200, both=True))
+                 * extrude(Circle((P.spacer_od + 4 * P.print_clearance) / 2),
+                           amount=200, both=True))
     return body.clean()
 
 
@@ -106,7 +111,7 @@ def stator_strap():
     overhang and no supports.  The assembly flips it.  The earlier version
     spanned a full arch from -r to +r and duplicated the cradle's lower half --
     which the assembly clash check found the moment both were placed."""
-    r = P.stator_od / 2 + 0.5
+    r = (P.stator_od + P.print_clearance) / 2
     w = P.stator_od + 150
     h = r + 16.0
     body = extrude(Rectangle(w, 40), amount=h)
@@ -117,7 +122,8 @@ def stator_strap():
     # down over the stator (local +z here, because this prints inverted).
     for sx in (-1, 1):
         body -= (Pos(sx * P.tie_xy, 0, h - P.tie_xy) * Rot(90, 0, 0)
-                 * extrude(Circle((P.spacer_od + 2.0) / 2), amount=200, both=True))
+                 * extrude(Circle((P.spacer_od + 4 * P.print_clearance) / 2),
+                           amount=200, both=True))
     return body.clean()
 
 
@@ -125,8 +131,10 @@ def auger_pin_jig():
     """Slips on the 35 mm shaft; the 6 mm bushed hole indexes every cross-pin
     hole on the same clock angle.  Drill press, 6 mm bit, done."""
     body = extrude(Rectangle(70, 30), amount=60)
-    body -= Pos(0, 0, -1) * extrude(Circle(P.shaft_dia / 2 + 0.25), amount=62)
-    body -= Rot(90, 0, 0) * Pos(0, 30, -50) * extrude(Circle(P.xpin_dia / 2 + 0.15), amount=100)
+    body -= Pos(0, 0, -1) * extrude(
+        Circle((P.shaft_dia + P.print_clearance) / 2), amount=62)
+    body -= Rot(90, 0, 0) * Pos(0, 30, -50) * extrude(
+        Circle((P.xpin_dia + P.print_clearance) / 2), amount=100)
     body -= Pos(0, 0, -1) * extrude(Rectangle(2.5, 40), amount=62)          # split, clamps on
     for z in (18, 42):
         body -= Rot(0, 90, 0) * Pos(-z, 0, -40) * extrude(Circle(2.6), amount=80)

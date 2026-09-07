@@ -76,14 +76,24 @@ def check():
 
     # --- printed parts: every model single-solid and inside the bed
     for r in manifest.rows():
-        n_exp = 2 if r["name"] == "joint_boot_clamp" else 1
-        want(r["solids"] == n_exp,
-             f"{r['name']}: {r['solids']} solids, expected {n_exp} "
-             f"(a split part means a boolean or an emboss did not fuse)")
+        n_exp = manifest.EXPECT_SOLIDS.get(r["name"], 1)
+        if n_exp is not None:
+            want(r["solids"] == n_exp,
+                 f"{r['name']}: {r['solids']} solids, expected {n_exp} "
+                 f"(a split part means a boolean or an emboss did not fuse)")
         bx, by, bz = r["bbox"]
         want(bx <= P.printer_x and by <= P.printer_y and bz <= P.printer_z,
              f"{r['name']}: {bx:.0f} x {by:.0f} x {bz:.0f} exceeds the "
              f"{P.printer_x:.0f} x {P.printer_y:.0f} x {P.printer_z:.0f} bed")
+
+    # --- fit coupons: every rung must be one solid and the plate must fit
+    import coupons
+    for nm, s in coupons.coupon_set():
+        want(len(s.solids()) == 1,
+             f"coupon {nm}: {len(s.solids())} solids -- a floating emboss")
+    cw, cd, ch = coupons.plate_size()
+    want(cw <= P.printer_x and cd <= P.printer_y and ch <= P.printer_z,
+         f"fit coupon plate {cw:.0f} x {cd:.0f} x {ch:.0f} exceeds the bed")
 
     # --- drill drive station
     import frame_drawing as fdw

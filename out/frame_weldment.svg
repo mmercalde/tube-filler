@@ -11,8 +11,8 @@
 <polygon points="332.0,597.7 407.0,420.9 393.0,415.0 318.0,591.8" class="thick"/>
 <polygon points="152.0,597.7 227.0,420.9 213.0,415.0 138.0,591.8" class="thick"/>
 <polygon points="79.0,610.0 145.0,610.0 145.0,594.8 79.0,594.8" class="thin"/>
-<polygon points="102.5,594.8 102.5,402.7 87.3,402.7 87.3,594.8" class="thin"/>
-<polygon points="94.9,402.7 81.1,402.7 81.1,417.9 94.9,417.9" class="thin"/>
+<polygon points="102.5,594.8 102.5,402.6 87.3,402.6 87.3,594.8" class="thin"/>
+<polygon points="94.9,402.6 81.1,402.6 81.1,417.8 94.9,417.8" class="thin"/>
 <rect x="277.0" y="373.6" width="180.0" height="22.9" class="ghost"/>
 <text x="367.0" y="389.0" class="d" text-anchor="middle">BARREL 600</text>
 <rect x="460.0" y="373.6" width="80.4" height="22.9" class="ghost"/>
@@ -103,10 +103,10 @@
 <polygon points="1345.2,594.8 1345.2,417.9 1330.0,417.9 1330.0,594.8" class="thin"/>
 <polygon points="1510.0,594.8 1510.0,417.9 1494.8,417.9 1494.8,594.8" class="thin"/>
 <rect x="1412.4" y="594.8" width="15.2" height="15.2" class="thin"/>
-<polygon points="1427.6,594.8 1427.6,402.7 1412.4,402.7 1412.4,594.8" class="thin"/>
-<rect x="1412.4" y="402.7" width="15.2" height="15.2" class="thin"/>
-<polygon points="1344.6,597.8 1427.0,405.7 1413.0,399.7 1330.6,591.8" class="thin"/>
-<polygon points="1509.4,591.8 1427.0,399.7 1413.0,405.7 1495.4,597.8" class="thin"/>
+<polygon points="1427.6,594.8 1427.6,402.6 1412.4,402.6 1412.4,594.8" class="thin"/>
+<rect x="1412.4" y="402.6" width="15.2" height="15.2" class="thin"/>
+<polygon points="1344.6,597.8 1427.0,405.6 1413.0,399.6 1330.6,591.8" class="thin"/>
+<polygon points="1509.4,591.8 1427.0,399.6 1413.0,405.6 1495.4,597.8" class="thin"/>
 <circle cx="1420.0" cy="385.0" r="11.4" class="thick"/>
 <rect x="1357.0" y="229.6" width="126.0" height="138.0" class="ghost"/>
 <line x1="1420.0" y1="628.0" x2="1420.0" y2="217.0" class="ctr"/>
@@ -121,10 +121,10 @@
 <text x="1359.6" y="497.5" class="d" text-anchor="middle" transform="rotate(-90 1359.6 497.5)">750</text>
 <circle cx="1420.0" cy="385.0" r="8.5" class="ghost"/>
 <text x="1420.0" y="368.4" class="d" text-anchor="middle">drill body 57 dia</text>
-<line x1="1454.0" y1="594.8" x2="1454.0" y2="402.7" class="dim"/>
+<line x1="1454.0" y1="594.8" x2="1454.0" y2="402.6" class="dim"/>
 <line x1="1451.0" y1="591.8" x2="1457.0" y2="597.8" class="dim"/>
-<line x1="1451.0" y1="399.7" x2="1457.0" y2="405.7" class="dim"/>
-<text x="1450.0" y="498.7" class="d" text-anchor="middle" transform="rotate(-90 1450.0 498.7)">640 upright</text>
+<line x1="1451.0" y1="399.6" x2="1457.0" y2="405.6" class="dim"/>
+<text x="1450.0" y="498.7" class="d" text-anchor="middle" transform="rotate(-90 1450.0 498.7)">641 upright</text>
 <text x="1307.6" y="652.0" class="d" text-anchor="start">Drill braces triangulate the upright:</text>
 <text x="1307.6" y="666.0" class="d" text-anchor="start">25 N.m on a 21 mm collar = ~1160 N</text>
 <text x="1307.6" y="680.0" class="d" text-anchor="start">sideways.  Unbraced it sags 2.4 mm.</text>
@@ -167,7 +167,7 @@
 <text x="1000.0" y="838.0" class="t" text-anchor="start">2    1450      skid rail           PTR 51x51x3</text>
 <text x="1000.0" y="857.0" class="t" text-anchor="start">2    1300      top rail            PTR 51x51x3</text>
 <text x="1000.0" y="876.0" class="t" text-anchor="start">2    697       drill brace         PTR 51x51x3</text>
-<text x="1000.0" y="895.0" class="t" text-anchor="start">1    640       drill upright       PTR 51x51x3</text>
+<text x="1000.0" y="895.0" class="t" text-anchor="start">1    641       drill upright       PTR 51x51x3</text>
 <text x="1000.0" y="914.0" class="t" text-anchor="start">4    640       knee brace          PTR 51x51x3</text>
 <text x="1000.0" y="933.0" class="t" text-anchor="start">6    589       leg                 PTR 51x51x3</text>
 <text x="1000.0" y="952.0" class="t" text-anchor="start">6    549       skid cross          PTR 51x51x3</text>

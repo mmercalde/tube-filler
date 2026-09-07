@@ -49,9 +49,12 @@ def save_step(name, shape):
     return path
 
 
-def save_stl(name, shape, tol=0.05):
+def save_stl(name, shape, tol=None):
+    """Meshed at params.stl_tolerance.  See the note there: this number is part
+    of the printed fit, because a meshed bore is an inscribed polygon."""
     path = os.path.join(OUT, name + ".stl")
-    export_stl(shape, path, tolerance=tol, angular_tolerance=0.1)
+    export_stl(shape, path, tolerance=tol or P.stl_tolerance,
+               angular_tolerance=P.stl_angular)
     return path
 
 

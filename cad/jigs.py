@@ -20,7 +20,7 @@ Conventions:
 from _common import *
 from math import sin, cos, radians, asin, degrees, ceil
 
-CLEAR = 0.35            # printed-bore clearance on the tube
+CLEAR = P.print_clearance / 2   # RADIAL: half the diametral print_clearance
 BOLT = 6.0              # M6 clamp bolts where a jig is bolted
 EAR = 20.0
 WALL = 8.0
@@ -124,7 +124,7 @@ class Saddle:
         self.upper += base * Pos(0, 0, self.R - 1) * extrude(
             Circle(boss_d / 2), amount=h + 1)
         self.upper -= base * Pos(0, 0, self.R - sink) * extrude(
-            Circle(hole_d / 2), amount=h + sink + 30)
+            Circle((hole_d + P.print_clearance) / 2), amount=h + sink + 30)
 
     def result(self):
         if self.lower is None:
@@ -184,7 +184,8 @@ def jig_barrel_end_ring(bc, hole_d, label, diagonal=True):
            else [(off, 0), (-off, 0), (0, off), (0, -off)])
     for x, y in pts:
         body += Pos(x, y, 6) * extrude(Circle(hole_d / 2 + 5), amount=16)
-        body -= Pos(x, y, -1) * extrude(Circle(hole_d / 2 + 0.2), amount=30)
+        body -= Pos(x, y, -1) * extrude(
+            Circle((hole_d + P.print_clearance) / 2), amount=30)
     body += _emboss(label, 6.0, 0, -(disc_r - 9), 6)
     body += _emboss(f"BC {bc:.1f}", 6.0, 0, disc_r - 9, 6)
     return body.clean()
@@ -242,7 +243,8 @@ def _post_jig_square(leg_len, hole_d, label, scribe_d=None, pad_t=26.0,
 
     # bushing pad, centred on the face
     body += Pos(0, 0, zc + pad_t / 2) * Box(70, 46, pad_t)
-    body -= Pos(0, 0, zc - 10) * extrude(Circle(hole_d / 2 + 0.15), amount=pad_t + 20)
+    body -= Pos(0, 0, zc - 10) * extrude(
+        Circle((hole_d + P.print_clearance) / 2), amount=pad_t + 20)
     if scribe_d:
         body -= Pos(0, 0, zc + pad_t - 1.2) * (
             extrude(Circle(scribe_d / 2 + 0.6), amount=2)
@@ -285,7 +287,7 @@ def _post_jig_round(datum, hole_d, label, scribe_d=None, boss_h=20.0):
                                        align=(Align.MIN, Align.CENTER, Align.MIN))
     up += Pos(0, 0, S.hu - 1) * extrude(Circle(hole_d / 2 + 6), amount=boss_h + 1)
     up -= Pos(0, 0, S.axis_upper + S.R - 8) * extrude(
-        Circle(hole_d / 2 + 0.15), amount=boss_h + 60)
+        Circle((hole_d + P.print_clearance) / 2), amount=boss_h + 60)
     if scribe_d:
         up -= Pos(0, 0, S.hu + boss_h - 1.2) * (
             extrude(Circle(scribe_d / 2 + 0.6), amount=2)
@@ -329,7 +331,8 @@ def _template(size, holes, name, t=4.0, bush=9.0):
     body = extrude(Rectangle(size, size), amount=t)
     for x, y, d in holes:
         body += Pos(x, y, t) * extrude(Circle(d / 2 + 4.5), amount=bush)
-        body -= Pos(x, y, -1) * extrude(Circle(d / 2 + 0.2), amount=t + bush + 4)
+        body -= Pos(x, y, -1) * extrude(
+            Circle((d + P.print_clearance) / 2), amount=t + bush + 4)
     body += _emboss(name, 6.0, 0, -size / 2 + 9, t)
     return body.clean()
 
@@ -364,7 +367,7 @@ def fixture_ptr_corner():
 
     SACRIFICIAL.  Tack, remove, THEN weld out.  Weld out with this fitted and
     you will melt it into the joint."""
-    s = P.ptr_size + 0.6
+    s = P.ptr_size + P.print_clearance
     wall, arm, off = 9.0, 120.0, 22.0
     H = s + wall
     W = s + 2 * wall
@@ -388,7 +391,7 @@ def fixture_ptr_corner():
 
 def fixture_ptr_tee():
     """Squares a cross member to a rail.  Same rules.  SACRIFICIAL."""
-    s = P.ptr_size + 0.6
+    s = P.ptr_size + P.print_clearance
     wall, L = 9.0, 140.0
     H = s + wall
     W = s + 2 * wall
