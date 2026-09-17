@@ -3,7 +3,7 @@
 Four short slices of the four printed fits that actually decide whether the
 rest of the plastic is usable:
 
-    A   auger hub bore on the 35 mm drive shaft   (+ the 6 mm cross pin)
+    A   auger CROSS-PIN hole, on a hub ring over the 35 mm drive shaft
     P   post-jig corner channel on the square PTR
     B   template drill bushing on its bit
     C   NPT dust-cap barb in a 1" coupling
@@ -38,8 +38,14 @@ def _tag(txt, size, x, y, z):
 
 # --------------------------------------------------------------------- A
 def coupon_auger_bore(c):
-    """Hub ring at the auger's real OD and bore.  Slide it on the shaft: it
-    should go by hand and not rock.  The cross hole checks the 6 mm pin."""
+    """Hub ring on the 35 mm shaft, with the 6 mm cross hole through it.
+
+    READ THE CROSS HOLE, not the bore.  The auger's own bore is a fixed
+    0.5 mm loose slide (`auger_bore_clear`) and is no longer tuned from here --
+    the pin locates and drives the segment, so that is the fit that matters.
+    The bore still steps with the rung because it is the project's reference
+    "printed bore over round steel" (the pin jig, the barrel jigs), and because
+    a ring you can feel on a real shaft is how you judge a rung at all."""
     body = extrude(Circle(P.auger_hub_od / 2), amount=H)
     body -= Pos(0, 0, -1) * extrude(Circle((P.shaft_dia + c) / 2), amount=H + 2)
     body -= (Rot(90, 0, 0) * Pos(0, H / 2, -40)

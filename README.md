@@ -6,7 +6,9 @@ sand/cement grout through a 1" hose and a 1" NPT port at each post base.
 
 > The posts are **square PTR**. The pump barrel is **round tube**. They are two
 > separate purchases that happen to share a nominal 3", and `params.py` keeps
-> them in separate blocks with no cross-reference. Measure both.
+> them in separate blocks with no cross-reference. The barrel is settled —
+> McMaster 6045N87, bought and certified (§2a). The posts are not: measure them,
+> and do not carry the barrel's certificate across.
 
 Buildable with a chop saw, a drill press, a stick or MIG welder, hand tools and
 a Bambu H2C. **No lathe, no mill** — every hole in this design is drilled,
@@ -96,6 +98,10 @@ are regenerated, this file is not.
 Open `params.py`, Block A. Everything marked **TBD** is a placeholder: the
 geometry around it is right, the number is a guess. Measure, edit, re-run.
 
+`out/design_summary.txt` **section 11** prints the live list — 26 inputs, read
+straight out of `params.py` at build time, so it cannot go stale and confirming
+a part visibly shortens it.
+
 | Input | How to get it |
 |---|---|
 | `stator_od`, `stator_len` | Calipers and a tape. Verify the vendor's 89.0 / 270.0. |
@@ -105,7 +111,7 @@ geometry around it is right, the number is a guess. Measure, edit, re-run.
 | `rotor_joint`, `rotor_pin_dia`, `rotor_pin_eye_width` | Calipers on the rotor's drive head. If it is a *drill* head (a hex stub) rather than a *pin* head, see §5.3. |
 | `rotor_free_len` | How far the rotor protrudes from the stator at the drive end. Sets how far into the barrel the con-rod reaches. |
 | **`rotor_eccentricity`** | Two ways, both hand-tool: **(a)** lay the rotor in a V-block (two lengths of angle iron work), put a dial indicator on top, turn one full revolution: **TIR = 2e**, so `e = TIR/2`. **(b)** Caliper the stator bore at an end: it is a slot of width *d* and length *d + 4e*, so `e = (long axis − short axis)/4`. Do both; they should agree within 0.3 mm. |
-| `barrel_od`, `barrel_wall` | Calipers on the owner's actual round tube for the **pump barrel**. Sets the barrel bore, the auger, the hopper slot and the barrel jigs. **Nothing about the posts depends on it.** |
+| ~~`barrel_od`, `barrel_wall`~~ | **CONFIRMED — no longer measure-first.** McMaster **6045N87**, 3" OD × 0.120" wall, ID 2.76" = 76.2 / 3.05 / 70.1 mm, ERW ASTM A513 Type 1, 3 ft, $42.13, purchased and certified. The numbers in `params.py` did not change; their *status* did. Still put calipers on it when it lands — see §2a. Sets the barrel bore, the auger, the hopper slot and the barrel jigs. **Nothing about the posts depends on it.** |
 | **`post_shape`, `post_side`, `post_wall`** | The twelve **posts**: square PTR, measured across the flats. **This is what sets the post volume and therefore the cement order** — see §3a. Separate stock from the barrel; do not assume they measure the same. |
 | **`drill_body_dia`** | Calipers on the round gearcase section just behind the chuck collar, at its widest. Sets the printed cradle. |
 | `drill_body_len`, `drill_chuck_depth`, `drill_chuck_body_len`, `drill_aux_offset` | Tape and calipers on the drill. These four place the cradle and the torque lug along the machine axis; get them wrong and the chuck is not coaxial with the stub. `verify.py` checks the result lands on the pump axis. |
@@ -117,6 +123,40 @@ geometry around it is right, the number is a guess. Measure, edit, re-run.
 | `printer_x/y/z` | Your H2C build volume. `verify.py` refuses to emit a part that will not fit. |
 | **`print_clearance`** | **Measured, not guessed — from `out/fit_coupons.stl`.** One number (0.25 mm diametral by default) governs every printed feature that has to fit real steel. Print the coupon ladder, find the rung that fits, put it here. See §5.0. |
 | `print_interference` | Same idea, opposite direction: the oversize on the NPT dust-cap barbs, which must grip. Its own coupon rung. |
+
+---
+
+## 2a. Receiving check — the barrel lands first
+
+The barrel is the first part of this machine to exist. Certified is not the
+same as measured, and everything printed that touches the barrel — the two
+end-ring jigs, the hopper-slot wrap jig, the saddles — is cut from these two
+numbers. Five minutes with calipers before the tube is put down somewhere.
+
+1. **ID at both ends.** Expect **70.1 mm** (2.76"). Measure the *bore*
+   directly, not OD minus twice a wall you read at one spot: the bore is what
+   the auger runs in, and `auger_od` is derived from it. Take two readings 90°
+   apart at each end — ERW tube is not perfectly round near the cut.
+2. **OD at two spots**, one near each end. Expect **76.2 mm**. This is the
+   number the printed jigs and the two barrel saddles register on.
+3. **Wall at both ends.** Expect **3.05 mm** (0.120"). A513 wall tolerance is
+   wide, so this is the one most likely to read off.
+4. **Find the ERW seam and mark it.** Run a fingernail or a rod down the bore
+   from each end: the internal seam ridge is easy to feel and hard to see. Mark
+   its clock position on **both** end faces with a paint pen and carry a line
+   along the outside of the tube. You will need it twice — when you mark out
+   the hopper slot (§5.3) and if you decide to flap-wheel the ridge.
+5. **Keep the offcut.** 3 ft is 914 mm; the barrel takes 600. The ~310 mm left
+   over is the only spare 3" round tube on site — do not cut it up for
+   brackets.
+
+If a number reads off: **edit `params.py`, re-run `make`, reprint the barrel
+jigs.** Nothing is scrapped, because every part that registers on the barrel is
+printed and every one of them comes *after* this check. That is the whole
+reason the jigs are plastic.
+
+Do not bore, hone or ream the barrel to clean up the seam. The wall is 3.05 mm
+and it is a pressure boundary — see the fab note in `BOM.md` §2.
 
 ---
 
@@ -250,7 +290,7 @@ ladders of five rungs**, each rung embossed with its own value.
 
 | tag | coupon | try it on | want |
 |---|---|---|---|
-| `A` | auger hub bore + cross-pin hole | the real 35 mm shaft and a 6 mm pin | slides on by hand, no rock |
+| `A` | auger **cross-pin hole**, in a hub ring on the shaft | the real 35 mm shaft and a 6 mm pin | pin pushes through by hand, no slop |
 | `P` | post-jig corner channel | a real square PTR corner | both faces touch, no rock, comes off by hand |
 | `B` | template drill bushing | the real 11 mm bit | spins freely, no perceptible wobble |
 | `C` | dust-cap barb | a real 1" NPT half coupling | firm thumb to seat, stays put upside down |
@@ -258,9 +298,9 @@ ladders of five rungs**, each rung embossed with its own value.
 Put the values that fit into `print_clearance` and `print_interference` in
 `params.py`, re-run `make`, and only then batch. **Every printed mating feature
 in the project is derived from those two numbers**, so one measurement retunes
-all 53 parts — the auger bore, the jig register faces on tube and on square
-post, the drill bushings, the cradle on the stator, the saddle on the drill
-body, the gland follower, the PTR weld fixtures.
+all 53 parts — the auger cross-pin holes, the jig register faces on tube and on
+square post, the drill bushings, the cradle on the stator, the saddle on the
+drill body, the gland follower, the PTR weld fixtures.
 
 `B` is the tightest use in the project: if one rung is snug there and loose
 everywhere else, that rung is the one that decides.
@@ -273,10 +313,21 @@ squish and seam placement are not the same on a 45° face as on a flat one.
 A wrong clearance found on part 40 of 53 costs several kilos of filament and a
 weekend. This plate costs an hour.
 
-> **Not everything printed is a "fit".** `running_clearance` (0.80 mm) is the
-> gap in the gland follower and lantern ring around the *rotating* shaft
-> sleeve. That is a gap, not a fit, and it is deliberately kept out of the
-> coupon loop — do not tune it from a coupon result.
+> **Not everything printed is a "fit".** Two numbers are deliberately outside
+> the coupon loop, and neither is tuned from a coupon result:
+>
+> - `running_clearance` (0.80 mm) — the gap in the gland follower and lantern
+>   ring around the *rotating* shaft sleeve. A gap, not a fit.
+> - `auger_bore_clear` (0.50 mm) — the auger hub bore over the 35 mm shaft,
+>   fixed at a loose slide. The 6 mm cross pin locates each segment and carries
+>   the drive; the bore's only job is to go on and come off a wet, gritty shaft
+>   with five segments to line up. Dialling the jig bushings in tight used to
+>   shrink this bore with them, which is the one place tight buys nothing.
+>
+> So on rung `A`, read the **cross-pin hole**. The ring's bore steps with the
+> rung too — it is the project's reference *printed bore over round steel*, and
+> a ring you can feel on a real shaft is how you judge a rung at all — but the
+> auger's own bore is not read from it.
 
 ### 5.1 Print the jigs next (before you cut any steel)
 `out/print_manifest.md` lists all 28 models with material, walls, infill,
@@ -306,10 +357,16 @@ Tack the whole skid, check the diagonals equal within 2 mm, then weld out.
 barrel, not the frame, is the alignment datum for the whole machine.
 
 ### 5.3 Barrel and plates (one day)
-1. Cut the barrel to 600 mm, square both ends.
-2. Wrap `barrel_slot_wrap_template.dxf` around it, centre-punch, chain-drill
-   and grind the 200 × 50 slot. The template's width is the **developed arc**
-   (54.5 mm), not the 50 mm chord — cut to the template, not to a tape.
+1. Cut the barrel to 600 mm from the 914 mm McMaster length, square both ends.
+   Keep the ~310 mm offcut.
+2. Wrap `barrel_slot_wrap_template.dxf` around it, **clocked 180° from the ERW
+   seam you marked on receiving** (§2a), centre-punch, chain-drill and grind
+   the 200 × 50 slot. The template's width is the **developed arc** (54.5 mm),
+   not the 50 mm chord — cut to the template, not to a tape. The slot is the
+   one place the seam ridge could pack grout; everywhere else it is a rib in a
+   70.1 bore and the auger clears it by 4 mm. With the slot open, a flap wheel
+   on an extension will reach most of the seam if you want it knocked down —
+   knock it down, do not try to remove it.
 3. Cut and drill the plates from the DXFs. `adapter_plate.dxf` carries a
    dashed **SCRIBE** layer showing the barrel OD circle — scribe it, don't cut
    it.
@@ -553,6 +610,10 @@ tells you what to do about each.
 
 Also worth feeding back: `grout_tau0` (from the pressure the gauge actually
 shows on the first post), and `auger_fill_eta` (from whether the pump surges).
+
+The full standing list is `out/design_summary.txt` **section 11** — every TBD
+left in `params.py`, grouped, generated at build time. It is currently 26
+inputs in seven groups; the barrel came off it when 6045N87 was ordered.
 
 
 ---

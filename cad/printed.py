@@ -7,7 +7,10 @@ from math import pi
 def auger_segment(pitch=None, seg_len=None):
     """Keyed feed-auger segment.  Print axis-VERTICAL, no supports:
     consecutive layers overlap 97% of the flight, so the helicoid is
-    self-supporting.  100% infill, 4 perimeters."""
+    self-supporting.  100% infill, 4 perimeters.
+
+    Hub bore is shaft_dia + auger_bore_clear (a fixed 0.5 mm loose slide).
+    Cross-pin hole is xpin_dia + print_clearance (a tuned fit)."""
     pitch = pitch or P.auger_pitch
     seg_len = seg_len or P.auger_seg_len
     turns = seg_len / pitch
@@ -43,7 +46,11 @@ def auger_segment(pitch=None, seg_len=None):
         flight = pc if flight is None else flight.fuse(pc)
 
     body = hub.fuse(boss).fuse(flight).clean()
-    bore = extrude(Circle((P.shaft_dia + P.print_clearance) / 2), amount=seg_len)
+    # The BORE is a fixed loose slide (auger_bore_clear), NOT print_clearance:
+    # the cross pin locates the segment and carries the drive, so the bore only
+    # has to go on and come off a wet, gritty shaft.  The PIN HOLE is the fit,
+    # and it is the one that stays tuned to the coupons.
+    bore = extrude(Circle(P.auger_hub_bore / 2), amount=seg_len)
     pin = (Rot(90, 0, 0) * Pos(0, (seg_len - P.auger_boss_len) / 2 + P.auger_boss_len / 2, -60)
            * extrude(Circle((P.xpin_dia + P.print_clearance) / 2), amount=120))
     return body.cut(bore).cut(pin).clean()

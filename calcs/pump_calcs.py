@@ -7,7 +7,7 @@ Every input comes from ../params.py.  Nothing here is hard-coded.
 
 Sign convention: pressures are gauge, bar.  SI internally.
 """
-import sys, os
+import sys, os, textwrap
 from math import pi, sqrt, log10
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
@@ -427,6 +427,35 @@ def main():
     row("sand (sieved <= 3 mm)", f"{sand_kg:.0f} kg")
     row("water", f"{water_L:.0f} L")
     row("hopper holds", f"{P.hop_vol_L:.0f} L", f"= {P.hop_vol_L/post_vol_L:.1f} posts per load")
+
+    # ---------------- what is still unknown ----------------
+    tbd = P.open_questions()
+    blocks = []
+    for b, n, v, note in tbd:
+        label = b.split(".")[0].strip()[:50]
+        if not blocks or blocks[-1][0] != label:
+            blocks.append((label, []))
+        blocks[-1][1].append((n, v, note))
+    rule(f"11  STILL A GUESS -- the {len(tbd)} TBDs left in params.py")
+    print("  Read live out of params.py, so this list cannot go stale.  Each one is a")
+    print("  PLACEHOLDER: the geometry around it is right, the number is not measured.")
+    print("  The barrel is no longer here -- McMaster 6045N87 is purchased and certified,")
+    print(f"  {P.barrel_od:.1f} OD x {P.barrel_wall:.2f} wall, bore {P.barrel_id:.1f}.")
+    for label, items in blocks:
+        print(f"\n  {label}")
+        for n, v, note in items:
+            head = f"    {n:<23s} {v:>10s}   "
+            for k, line in enumerate(textwrap.wrap(note, 39) or [""]):
+                print(((head if k == 0 else " " * len(head)) + line).rstrip())
+    print()
+    print("  Four of these decide whether steel gets cut the way it is drawn today:")
+    print("    T_stator_friction  -- section 4.  The whole drive question.  Water test first.")
+    print("    rotor_*            -- the con-rod chain and every x-station behind it.")
+    print("    stator_end_style / _has_steel_jacket -- sets stator_crush and the spacer cut.")
+    print("    drill_*            -- the cradle and torque lug stations; verify.py re-checks.")
+    print("  The rest cost a reprint, not a re-cut: post_* sizes the cement order (section")
+    print("  10) and reprints two jigs, printer_* only gates what fits the bed, and")
+    print("  bucket_rim_od is one sand screen.")
 
     # ---------------- acceptance ----------------
     rule("ACCEPTANCE CHECKS")

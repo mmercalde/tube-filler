@@ -11,6 +11,9 @@ from the CAD.
 
 | Item | Qty | Spec | US source | MX equivalent | Unit | Ext |
 |---|--:|---|---|---|--:|--:|
+| Barrel stock -- ROUND tube (PURCHASED, CERTIFIED) | 1 | McMaster **6045N87** Multipurpose Low-Carbon Steel Round Tube, 3" OD x 0.120" wall, 2.76" ID (76.2 / 3.05 / 70.1 mm), ERW ASTM A513 Type 1, 3 ft length. Barrel takes 600 mm; the remaining ~308 mm stays as stock. | McMaster 6045N87 | tubo redondo 3" ced. 10 (equivalente) | $42.13 | $42.13 |
+| Drive shaft stock | 1 | 35 mm cold-rolled round rod x 1 m (1045 preferred). The shaft is 756 mm, so ~244 mm is left over. | McMaster -- SAME ORDER as the barrel | barra de acero estirado en frio 35 mm | $68 | $68 |
+| Drill bushings, type P (press-fit, headless) | 1 | set for the printed jigs: 6 / 6.4 / 11 / 12 mm ID. **Not yet modelled:** the jigs as drawn bore for the BIT (hole + `print_clearance`), not for a bushing OD. Seating these is a jig change -- see the note under this table. | McMaster -- SAME ORDER as the barrel | bujes de broca tipo P | $44 | $44 |
 | D6-3 rotor + stator set | 1 | stator 89 OD x 270, 73 ShA, 3 mm max grain | German pump supplier (owner-sourced) | same | $320 | $320 |
 | Paddle drill (PRIMARY DRIVE) | 1 | 900 W spade-handle, 1/2" chuck, low range 0-550 rpm, variable trigger | owner already has | owner already has | $0 | $0 |
 | Pillow blocks | 2 | UCP207, 35 mm bore, cast, set-screw | any import UCP207 | chumacera de piso UCP207 | $17 | $34 |
@@ -27,7 +30,7 @@ from the CAD.
 | Half coupling, gauge | 1 | 1/4" NPT 3000# forged steel | hardware store | media copla 1/4" | $4 | $4 |
 | Half coupling, grease | 1 | 1/8" NPT 3000# forged steel | hardware store | media copla 1/8" | $4 | $4 |
 | Grease nipple | 1 | 1/8" NPT straight zerk | hardware store | grasera 1/8" | $3 | $3 |
-| Gland packing | 1 | 10 mm square graphited PTFE/flax, 1 m coil | McMaster 9911K / Chesterton 1730 | empaquetadura de grafito 10 mm | $26 | $26 |
+| Gland packing | 1 | square graphite/PTFE packing, 1 m coil. **The box wants 10 mm** ((gland_box_id 62.7 - sleeve_od 42.2)/2 = 10.25 mm of annulus). The 1/4" (6.35 mm) coil on the McMaster order is **3.9 mm short of filling it** -- see the note under this table before it goes in. | McMaster -- SAME ORDER as the barrel | empaquetadura de grafito 10 mm | $26 | $26 |
 | Threaded rod | 1 | M10 x 1 m, class 8.8 (or 3/8-16 grade 5) | hardware store | varilla roscada M10 grado 8.8 | $9 | $9 |
 | Nuts + washers | 1 | M10: 16 nyloc + 16 flat, 8.8 | hardware store | ferreteria | $11 | $11 |
 | Dowel pins, joint | 2 | 12 mm x 60 hardened dowel, ground | McMaster 98381A | perno endurecido 12 mm | $7 | $14 |
@@ -35,18 +38,40 @@ from the CAD.
 | Fastener kit | 1 | M12 x 8 (pillow blocks), M10 x 12 (flange/gland), M8 x 8, M6 x 6, all with nuts + washers | hardware store | ferreteria | $38 | $38 |
 | Nitrile sheet | 1 | 3 mm x 300 x 300, 60-70 Shore A (stator + flange gaskets) | McMaster 8635K | hule nitrilo 3 mm | $16 | $16 |
 | Electrical kit | 1 | IP55 enclosure, on/off with thermal overload set 1.15 x FLA, 20 A breaker, 30 mA RCD, 2.5 mm2 cable, plug | hardware store | arrancador con relevador termico | $98 | $98 |
-| Filament | 1 | see out/print_manifest.md for the exact split and totals (~8 kg across 56 parts). ASA for anything that lives outdoors or against a warm drill; PETG for the rest. | any | any | $155 | $155 |
+| Filament | 1 | see out/print_manifest.md for the exact split and totals. ASA for anything that lives outdoors or against a warm drill; PETG for the rest. | any | any | $155 | $155 |
 | Paint | 1 | etch primer + enamel | hardware store | ferreteria | $26 | $26 |
 | Anti-seize + grease | 1 | copper anti-seize for the tie rods; EP2 for the gland | hardware store | ferreteria | $18 | $18 |
-| | | | | | **TOTAL** | **$1141** |
+| | | | | | **TOTAL** | **$1,295.13** |
 
-Without the rotor/stator set (owner already bought it): **$821**.
+Without the rotor/stator set (owner already bought it): **$975.13**.
 
 
-> **Two different 3" stocks.**  The pump barrel is ROUND tube (76.2 OD x 3.05).  The twelve posts are SQUARE PTR
-> (76.2 across flats x 3.05).  Measure both; they are separate purchases and `params.py` keeps them in
-> separate blocks with no cross-reference.  The square bore holds 29.5 L per post,
-> 27% more than round tube of the same nominal size, and the cement order follows from it.
+> **One McMaster order, placed.**  The barrel is the first part to arrive (Monday).  Its
+> **$42.13** is the only invoice figure in the table above; everything else is still an
+> estimate.  On the same order: the 35 mm cold-rolled shaft rod, the press-fit
+> type-P drill bushings, and the square graphite gland packing.  Two of those three
+> need a decision before they are used:
+>
+> - **Packing size.**  The box annulus is 10.25 mm, so `packing_sq` is 10 mm.  A 1/4"
+>   (6.35 mm) coil leaves ~3.9 mm of the annulus unfilled: the rings roll instead of
+>   squaring up, and they extrude past the follower on the first pressure stroke.
+>   The nearest McMaster size that works is **3/8" (9.53 mm)**.  Nothing in the CAD
+>   changed for this -- `packing_sq` is still 10 mm and the gland plate, follower and
+>   box are cut for it.  Check the coil before it goes in.
+> - **Bushings.**  The printed jigs bore for the BIT, not for a bushing OD, so a
+>   type-P bushing has nothing to press into today.  Seating them means printing the
+>   jig holes at the bushing OD with an interference, which is a jig change this
+>   revision has not made.  Until then the bushings are stock, and the jigs guide
+>   the bit in plastic exactly as coupon `B` measures them.
+
+
+> **Two different 3" stocks, and only one of them is settled.**  The pump barrel is ROUND
+> tube (76.2 OD x 3.05), **CONFIRMED** -- McMaster 6045N87, purchased and certified.
+> The twelve posts are SQUARE PTR (76.2 across flats x 3.05) and are **still TBD**:
+> separate purchase, separate `params.py` block, no cross-reference either way.  Measure
+> the posts; do not carry the barrel's certificate across to them.  The square bore holds
+> 29.5 L per post, 27% more than round tube of the same nominal size, and the
+> cement order follows from it.
 
 
 ## 2. Fabricated -- steel
@@ -55,7 +80,7 @@ Every DXF named here is in `out/`.  Cut lengths are square cuts unless stated.
 
 | Item | Qty | Stock | Cut / operations |
 |---|--:|---|---|
-| Barrel (ROUND tube -- not post stock) | 1 | owner's round tube 76.2 OD x 3.05 wall | cut 600 mm. Slot 200 x 50 in the top (developed width 54.5 -- use barrel_slot_wrap_template.dxf) |
+| Barrel (ROUND tube -- not post stock) | 1 | McMaster 6045N87, 3 ft x 76.2 OD x 3.05 wall (CONFIRMED) | cut 600 mm from the 914 mm length, square both ends. Slot 200 x 50 in the top (developed width 54.5 -- use barrel_slot_wrap_template.dxf), **clocked away from the ERW seam** -- see the note below. |
 | Adapter plate | 1 | 10 mm plate | 135 x 135; bore 50; 4 x 11 on 125.7 BC (diagonals). adapter_plate.dxf |
 | Discharge rear plate | 1 | 10 mm plate | 135 x 135; bore 54; same 4 tie holes. discharge_rear_plate.dxf |
 | Discharge chamber ring | 1 | 2" sch40 pipe | 2" sch40 (60.3 OD x 52.5 ID) x 35 mm |
@@ -87,6 +112,26 @@ Every DXF named here is in `out/`.  Cut lengths are square cuts unless stated.
 | Lifting eyes | 4 | 12 mm plate | 80 x 60 with a 30 mm hole |
 | Frame | 1 | PTR 51 x 51 x 3.05 | see out/frame_weldment.svg for the full cut list (~19 m) |
 
+> **Fab note -- the barrel's ERW seam.**  6045N87 is ERW (electric resistance welded)
+> ASTM A513 Type 1, so there is a weld-seam ridge running the full length of the bore.
+> It is typically a few tenths of a millimetre proud, occasionally up to ~0.5 mm.
+>
+> **It is harmless here.**  The auger runs at 4.0 mm radial clearance (auger OD 62
+> in a 70.1 bore); a 0.5 mm ridge spends one eighth of that.  Do not bore, hone or
+> ream the barrel to chase it -- the wall is only 3.05 mm and it is a pressure boundary.
+>
+> Two things to do instead, in order:
+>
+> 1. **Clock the hopper slot away from the seam.**  Free, and it is the whole fix.
+>    Find the seam before you mark out (see README section 2a), then put the
+>    200 x 50 slot on the opposite side of the tube.  The slot is where grout enters
+>    and where the flights are least supported; a ridge under the throat is the one
+>    place it could pack material.  Anywhere else it is just a rib in a 70.1 bore.
+> 2. **Optional:** with the slot cut, a flap wheel on an extension will reach most of
+>    the seam through the opening.  Knock the ridge down, do not try to remove it.
+>    Five minutes; skip it if the auger turns freely by hand on assembly.
+
+
 ### Plate nesting
 
 - 10 mm plate: adapter plate + discharge rear plate + discharge cap + sub-plate fit inside one **350 x 350** offcut.
@@ -96,12 +141,12 @@ Every DXF named here is in `out/`.  Cut lengths are square cuts unless stated.
 
 ## 3. Printed
 
-The full print list -- 28 models, 56 parts, material, walls, infill, print
+The full print list -- 29 models, 53 parts, material, walls, infill, print
 orientation and consumable-vs-one-time-jig -- is generated into
 **`out/print_manifest.md`**.  It is not duplicated here, because a BOM and a
 manifest that disagree are worse than either alone.
 
-Summary: about 8 kg of filament across 56 parts, in three groups --
+Summary: about 6.8 kg of filament across 53 parts, in three groups --
 
 - **WETTED** augers, gland follower, lantern ring, stator cradle and strap;
 - **FAB JIGS** barrel and post drill saddles, 1:1 flange templates, PTR tack

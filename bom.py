@@ -16,8 +16,55 @@ import pump_calcs as C          # quantities come from the calcs, never retyped
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 
+# The barrel now has a REAL price off a real invoice, so the table can no longer
+# be all round dollars.  Cents only where they are actual.
+def _money(x):
+    return f"${x:,.2f}" if abs(x - round(x)) > 1e-9 else f"${x:,.0f}"
+
+
+# Lines on the one McMaster order placed with the barrel.  Marked, not priced
+# differently: only the barrel's $42.13 is an invoice figure.
+MCM = "McMaster -- SAME ORDER as the barrel"
+
+
+def _print_totals():
+    """Model/part/filament totals, read back out of the generated print manifest.
+
+    They were transcribed here by hand and had already drifted (28/56/8 kg
+    against the manifest's 29/53/6.8).  A BOM and a manifest that disagree are
+    worse than either alone -- which this section says in so many words.
+    """
+    import re
+    path = os.path.join(ROOT, "out", "print_manifest.md")
+    try:
+        txt = open(path).read()
+        n_parts, n_models = re.search(
+            r"\*\*(\d+) printed parts\*\* in (\d+) distinct", txt).groups()
+        kg = re.search(r"Estimated filament: \*\*([\d.]+) kg\*\*", txt).group(1)
+        return int(n_models), int(n_parts), float(kg)
+    except Exception:
+        return None, None, None
+
 # name, qty, spec, US source, MX equivalent, unit price USD
 PURCHASED = [
+ ("Barrel stock -- ROUND tube (PURCHASED, CERTIFIED)", 1,
+  f"McMaster **6045N87** Multipurpose Low-Carbon Steel Round Tube, 3\" OD x 0.120\" "
+  f"wall, 2.76\" ID ({P.barrel_od:.1f} / {P.barrel_wall:.2f} / {P.barrel_id:.1f} mm), "
+  f"ERW ASTM A513 Type 1, {P.barrel_stock_len/304.8:.0f} ft length. Barrel takes "
+  f"{P.barrel_len:.0f} mm; the remaining ~"
+  f"{P.barrel_stock_len - P.barrel_len - 2*3:.0f} mm stays as stock.",
+  "McMaster 6045N87", "tubo redondo 3\" ced. 10 (equivalente)", 42.13),
+ ("Drive shaft stock", 1,
+  f"{P.shaft_dia:.0f} mm cold-rolled round rod x 1 m (1045 preferred). The shaft is "
+  f"{abs(P.x_shaft_rear - P.x_auger_front):.0f} mm, so ~"
+  f"{1000 - abs(P.x_shaft_rear - P.x_auger_front):.0f} mm is left over.",
+  MCM, "barra de acero estirado en frio 35 mm", 68),
+ ("Drill bushings, type P (press-fit, headless)", 1,
+  f"set for the printed jigs: {P.xpin_dia:.0f} / 6.4 / {P.tie_rod_hole:.0f} / "
+  f"{P.post_vent_dia:.0f} mm ID. **Not yet modelled:** the jigs as drawn bore for the "
+  f"BIT (hole + `print_clearance`), not for a bushing OD. Seating these is a jig "
+  f"change -- see the note under this table.",
+  MCM, "bujes de broca tipo P", 44),
  ("D6-3 rotor + stator set", 1, f"stator {P.stator_od:.0f} OD x {P.stator_len:.0f}, "
   f"{P.stator_shore_a:.0f} ShA, {P.stator_max_grain:.0f} mm max grain",
   "German pump supplier (owner-sourced)", "same", 320),
@@ -50,8 +97,12 @@ PURCHASED = [
  ("Half coupling, gauge", 1, "1/4\" NPT 3000# forged steel", "hardware store", "media copla 1/4\"", 4),
  ("Half coupling, grease", 1, "1/8\" NPT 3000# forged steel", "hardware store", "media copla 1/8\"", 4),
  ("Grease nipple", 1, "1/8\" NPT straight zerk", "hardware store", "grasera 1/8\"", 3),
- ("Gland packing", 1, f"{P.packing_sq:.0f} mm square graphited PTFE/flax, 1 m coil",
-  "McMaster 9911K / Chesterton 1730", "empaquetadura de grafito 10 mm", 26),
+ ("Gland packing", 1, f"square graphite/PTFE packing, 1 m coil. **The box wants "
+  f"{P.packing_sq:.0f} mm** ((gland_box_id {P.gland_box_id:.1f} - sleeve_od "
+  f"{P.sleeve_od:.1f})/2 = {(P.gland_box_id - P.sleeve_od)/2:.2f} mm of annulus). "
+  f"The 1/4\" (6.35 mm) coil on the McMaster order is **3.9 mm short of filling it** "
+  f"-- see the note under this table before it goes in.",
+  MCM, "empaquetadura de grafito 10 mm", 26),
  ("Threaded rod", 1, f"M{P.tie_rod_m:.0f} x 1 m, class 8.8 (or 3/8-16 grade 5)",
   "hardware store", "varilla roscada M10 grado 8.8", 9),
  ("Nuts + washers", 1, f"M{P.tie_rod_m:.0f}: 16 nyloc + 16 flat, 8.8",
@@ -67,9 +118,9 @@ PURCHASED = [
  ("Electrical kit", 1, "IP55 enclosure, on/off with thermal overload set 1.15 x FLA, "
   "20 A breaker, 30 mA RCD, 2.5 mm2 cable, plug",
   "hardware store", "arrancador con relevador termico", 98),
- ("Filament", 1, "see out/print_manifest.md for the exact split and totals "
-  "(~8 kg across 56 parts). ASA for anything that lives outdoors or against a "
-  "warm drill; PETG for the rest.", "any", "any", 155),
+ ("Filament", 1, "see out/print_manifest.md for the exact split and totals. "
+  "ASA for anything that lives outdoors or against a warm drill; PETG for the rest.",
+  "any", "any", 155),
  ("Paint", 1, "etch primer + enamel", "hardware store", "ferreteria", 26),
  ("Anti-seize + grease", 1, "copper anti-seize for the tie rods; EP2 for the gland",
   "hardware store", "ferreteria", 18),
@@ -84,9 +135,12 @@ def fabricated():
     F = []
     A = F.append
     A(("Barrel (ROUND tube -- not post stock)", 1,
-       f"owner's round tube {P.barrel_od:.1f} OD x {P.barrel_wall:.2f} wall",
-       f"cut {P.barrel_len:.0f} mm. Slot {P.barrel_slot_l:.0f} x {P.barrel_slot_w:.0f} in the "
-       f"top (developed width 54.5 -- use barrel_slot_wrap_template.dxf)"))
+       f"McMaster 6045N87, {P.barrel_stock_len/304.8:.0f} ft x {P.barrel_od:.1f} OD x "
+       f"{P.barrel_wall:.2f} wall (CONFIRMED)",
+       f"cut {P.barrel_len:.0f} mm from the {P.barrel_stock_len:.0f} mm length, square both "
+       f"ends. Slot {P.barrel_slot_l:.0f} x {P.barrel_slot_w:.0f} in the "
+       f"top (developed width 54.5 -- use barrel_slot_wrap_template.dxf), "
+       f"**clocked away from the ERW seam** -- see the note below."))
     A(("Adapter plate", 1, f"{P.plate_t:.0f} mm plate",
        f"{P.plate_size:.0f} x {P.plate_size:.0f}; bore {P.adapter_bore:.0f}; "
        f"4 x {P.tie_rod_hole:.0f} on {P.tie_bc:.1f} BC (diagonals). adapter_plate.dxf"))
@@ -200,18 +254,42 @@ def render():
     tot = 0
     for n, q, spec, us, mx, pr in PURCHASED:
         tot += q * pr
-        w(f"| {n} | {q} | {spec} | {us} | {mx} | ${pr} | ${q*pr} |")
-    w(f"| | | | | | **TOTAL** | **${tot}** |")
+        w(f"| {n} | {q} | {spec} | {us} | {mx} | {_money(pr)} | {_money(q*pr)} |")
+    w(f"| | | | | | **TOTAL** | **{_money(tot)}** |")
     w(f"\nWithout the rotor/stator set (owner already bought it): "
-      f"**${tot - 320}**.\n")
+      f"**{_money(tot - 320)}**.\n")
 
-    w(f"\n> **Two different 3\" stocks.**  The pump barrel is ROUND tube "
-      f"({P.barrel_od:.1f} OD x {P.barrel_wall:.2f}).  The twelve posts are "
-      f"SQUARE PTR\n> ({P.post_side:.1f} across flats x {P.post_wall:.2f}).  "
-      f"Measure both; they are separate purchases and `params.py` keeps them in\n"
-      f"> separate blocks with no cross-reference.  The square bore holds "
-      f"{C.post_vol_L:.1f} L per post,\n> 27% more than round tube of the same "
-      f"nominal size, and the cement order follows from it.\n")
+    w(f"\n> **One McMaster order, placed.**  The barrel is the first part to arrive "
+      f"(Monday).  Its\n> **$42.13** is the only invoice figure in the table above; "
+      f"everything else is still an\n> estimate.  On the same order: the "
+      f"{P.shaft_dia:.0f} mm cold-rolled shaft rod, the press-fit\n> type-P drill "
+      f"bushings, and the square graphite gland packing.  Two of those three\n> need "
+      f"a decision before they are used:\n>\n"
+      f"> - **Packing size.**  The box annulus is "
+      f"{(P.gland_box_id - P.sleeve_od)/2:.2f} mm, so `packing_sq` is "
+      f"{P.packing_sq:.0f} mm.  A 1/4\"\n>   (6.35 mm) coil leaves ~3.9 mm of the "
+      f"annulus unfilled: the rings roll instead of\n>   squaring up, and they "
+      f"extrude past the follower on the first pressure stroke.\n>   The nearest "
+      f"McMaster size that works is **3/8\" (9.53 mm)**.  Nothing in the CAD\n>   "
+      f"changed for this -- `packing_sq` is still {P.packing_sq:.0f} mm and the "
+      f"gland plate, follower and\n>   box are cut for it.  Check the coil before it "
+      f"goes in.\n"
+      f"> - **Bushings.**  The printed jigs bore for the BIT, not for a bushing OD, so "
+      f"a\n>   type-P bushing has nothing to press into today.  Seating them means "
+      f"printing the\n>   jig holes at the bushing OD with an interference, which is "
+      f"a jig change this\n>   revision has not made.  Until then the bushings are "
+      f"stock, and the jigs guide\n>   the bit in plastic exactly as coupon `B` "
+      f"measures them.\n")
+
+    w(f"\n> **Two different 3\" stocks, and only one of them is settled.**  The pump "
+      f"barrel is ROUND\n> tube ({P.barrel_od:.1f} OD x {P.barrel_wall:.2f}), "
+      f"**CONFIRMED** -- McMaster 6045N87, purchased and certified.\n> The twelve "
+      f"posts are SQUARE PTR ({P.post_side:.1f} across flats x {P.post_wall:.2f}) and "
+      f"are **still TBD**:\n> separate purchase, separate `params.py` block, no "
+      f"cross-reference either way.  Measure\n> the posts; do not carry the barrel's "
+      f"certificate across to them.  The square bore holds\n> {C.post_vol_L:.1f} L "
+      f"per post, 27% more than round tube of the same nominal size, and the\n> "
+      f"cement order follows from it.\n")
     w("\n## 2. Fabricated -- steel\n")
     w("Every DXF named here is in `out/`.  Cut lengths are square cuts unless stated.\n")
     w("| Item | Qty | Stock | Cut / operations |")
@@ -219,6 +297,28 @@ def render():
     for n, q, stock, cut in fabricated():
         w(f"| {n} | {q} | {stock} | {cut} |")
 
+    w(f"\n> **Fab note -- the barrel's ERW seam.**  6045N87 is ERW (electric "
+      f"resistance welded)\n> ASTM A513 Type 1, so there is a weld-seam ridge "
+      f"running the full length of the bore.\n> It is typically a few tenths of a "
+      f"millimetre proud, occasionally up to ~0.5 mm.\n>\n"
+      f"> **It is harmless here.**  The auger runs at "
+      f"{P.auger_radial_clear:.1f} mm radial clearance "
+      f"(auger OD {P.auger_od:.0f}\n> in a {P.barrel_id:.1f} bore); a 0.5 mm ridge "
+      f"spends one eighth of that.  Do not bore, hone or\n> ream the barrel to "
+      f"chase it -- the wall is only {P.barrel_wall:.2f} mm and it is a pressure "
+      f"boundary.\n>\n"
+      f"> Two things to do instead, in order:\n>\n"
+      f"> 1. **Clock the hopper slot away from the seam.**  Free, and it is the whole "
+      f"fix.\n>    Find the seam before you mark out (see README section 2a), then "
+      f"put the\n>    {P.barrel_slot_l:.0f} x {P.barrel_slot_w:.0f} slot on the "
+      f"opposite side of the tube.  The slot is where grout enters\n>    and where "
+      f"the flights are least supported; a ridge under the throat is the one\n>    "
+      f"place it could pack material.  Anywhere else it is just a rib in a "
+      f"{P.barrel_id:.1f} bore.\n"
+      f"> 2. **Optional:** with the slot cut, a flap wheel on an extension will reach "
+      f"most of\n>    the seam through the opening.  Knock the ridge down, do not "
+      f"try to remove it.\n>    Five minutes; skip it if the auger turns freely by "
+      f"hand on assembly.\n")
     w("\n### Plate nesting\n")
     w(f"- 10 mm plate: adapter plate + discharge rear plate + discharge cap + sub-plate "
       f"fit inside one **350 x 350** offcut.\n"
@@ -227,11 +327,17 @@ def render():
       f"head-to-tail inside **1200 x 900**.\n")
 
     w("\n## 3. Printed\n")
-    w("The full print list -- 28 models, 56 parts, material, walls, infill, print")
+    n_models, n_parts, kg = _print_totals()
+    tot_txt = f"{n_models} models, {n_parts} parts" if n_models else "every model"
+    w(f"The full print list -- {tot_txt}, material, walls, infill, print")
     w("orientation and consumable-vs-one-time-jig -- is generated into")
     w("**`out/print_manifest.md`**.  It is not duplicated here, because a BOM and a")
     w("manifest that disagree are worse than either alone.\n")
-    w("Summary: about 8 kg of filament across 56 parts, in three groups --\n")
+    if n_models:
+        w(f"Summary: about {kg:.1f} kg of filament across {n_parts} parts, "
+          f"in three groups --\n")
+    else:
+        w("Summary, in three groups --\n")
     w("- **WETTED** augers, gland follower, lantern ring, stator cradle and strap;")
     w("- **FAB JIGS** barrel and post drill saddles, 1:1 flange templates, PTR tack")
     w("  fixtures (sacrificial), tie-rod spacer gauge -- none of these is on the")

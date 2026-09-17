@@ -196,6 +196,74 @@
   hopper holds                                       44 L  = 1.5 posts per load
 
 ==============================================================================
+11  STILL A GUESS -- the 26 TBDs left in params.py
+==============================================================================
+  Read live out of params.py, so this list cannot go stale.  Each one is a
+  PLACEHOLDER: the geometry around it is right, the number is not measured.
+  The barrel is no longer here -- McMaster 6045N87 is purchased and certified,
+  76.2 OD x 3.05 wall, bore 70.1.
+
+  D6-3 stator (vendor spec, verify with calipers)
+    stator_inlet_bore          50.0 mm   bore visible at the stator end face
+    stator_has_steel_jacket      False   True if the rubber is bonded inside a
+                                         steel tube (changes the clamp calc)
+    stator_end_style           "plain"   "plain" (flat rubber face) or "collar"
+    stator_end_collar_od       89.0 mm   only used if stator_end_style=="collar"
+    stator_end_collar_len       0.0 mm   collar length, if there is one
+
+  D6-3 rotor
+    rotor_joint             "pin_head"   "pin_head" or "drill_hex"
+    rotor_pin_dia              12.0 mm   cross-pin diameter at the rotor head
+    rotor_pin_eye_width        22.0 mm   width of the rotor's eye/tongue
+    rotor_hex_af               19.0 mm   across-flats, only if "drill_hex"
+    rotor_free_len             90.0 mm   rotor sticking out of the stator, drive
+                                         end
+    rotor_pin_inset            20.0 mm   pin centre back from the rotor's rear
+                                         tip
+    rotor_eccentricity          4.5 mm   = (stator minor bore - rotor dia)/2 ...
+                                         see README "measuring eccentricity"
+
+  PRIMARY DRIVE: 1/2" spade-handle paddle drill
+    drill_body_dia             57.0 mm   BARREL/GEARCASE DIA at the cradle
+                                         station. Calipers on the drill, just
+                                         behind the chuck collar, at the widest
+                                         round section
+    drill_body_len            110.0 mm   length of that round section
+    drill_aux_handle_dia       43.0 mm   auxiliary-handle collar dia (the Euro
+                                         43 mm collar is common). The steel
+                                         torque lug bears here
+    drill_chuck_depth          40.0 mm   how deep the jaws grip
+    drill_chuck_body_len       85.0 mm   chuck front face to gearcase nose
+    drill_aux_offset           60.0 mm   gearcase nose to aux-handle collar
+
+  THE TWELVE POSTS
+    post_side                  76.2 mm   square: outside across the flats
+    post_od                    76.2 mm   round only; ignored when square
+    post_wall                  3.05 mm   cal-11 nominal 3.05
+
+  Torque budget (see calcs for the breakdown)
+    T_stator_friction         22.6 N.m   dry-ish rubber drag, RPM-independent. A
+                                         GUESS until the water test -- test_plan
+                                         W-4
+
+  3D printer
+    printer_x                 350.0 mm   confirm against the H2C spec
+    printer_y                 320.0 mm
+    printer_z                 325.0 mm
+
+  misc measured inputs for the printed jigs
+    bucket_rim_od             295.0 mm   5-gal bucket outside rim dia
+
+  Four of these decide whether steel gets cut the way it is drawn today:
+    T_stator_friction  -- section 4.  The whole drive question.  Water test first.
+    rotor_*            -- the con-rod chain and every x-station behind it.
+    stator_end_style / _has_steel_jacket -- sets stator_crush and the spacer cut.
+    drill_*            -- the cradle and torque lug stations; verify.py re-checks.
+  The rest cost a reprint, not a re-cut: post_* sizes the cement order (section
+  10) and reprints two jigs, printer_* only gates what fits the bed, and
+  bucket_rim_od is one sand screen.
+
+==============================================================================
 ACCEPTANCE CHECKS
 ==============================================================================
   [PASS]  delivery pressure >= 2 bar

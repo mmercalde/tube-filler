@@ -27,7 +27,7 @@ stator_has_steel_jacket = False #    TBD  True if the rubber is bonded inside a
                                #          steel tube (changes the clamp calc)
 stator_end_style     = "plain" #     TBD  "plain" (flat rubber face) or "collar"
 stator_end_collar_od = 89.0    # mm  TBD  only used if stator_end_style=="collar"
-stator_end_collar_len= 0.0     # mm  TBD
+stator_end_collar_len= 0.0     # mm  TBD  collar length, if there is one
 stator_crush         = 2.0     # mm  axial squeeze designed into the spacers.
                                #     Rubber-face stators: 2.0.  Steel-jacketed
                                #     stators: set to 0.0 (jacket is the stop).
@@ -42,9 +42,19 @@ rotor_pin_inset      = 20.0    # mm  TBD  pin centre back from the rotor's rear 
 rotor_eccentricity   = 4.5     # mm  TBD  = (stator minor bore - rotor dia)/2 ... see
                                #          README "measuring eccentricity"
 
-# --- Owner's steel stock ----------------------------------------------------
-barrel_od            = 76.2    # mm  TBD  3" tubular, nominal 76.2             MEASURE
-barrel_wall          = 3.05    # mm  TBD  cal-11 = 3.05                        MEASURE
+# --- Steel stock ------------------------------------------------------------
+# BARREL: CONFIRMED.  Purchased and certified, no longer measure-first.
+#   McMaster 6045N87 -- Multipurpose Low-Carbon Steel Round Tube,
+#   3" OD x 0.120" wall, 2.76" ID, ERW ASTM A513 Type 1, 3 ft length, $42.13.
+#   76.2 / 3.05 / 70.1 mm, which is exactly what this file already carried --
+#   the numbers below did NOT change, only their status did.
+#   ERW means an internal weld-seam ridge running the length of the bore.  It is
+#   harmless at 4 mm auger clearance; see BOM section 2 and README section 5.3.
+#   Still caliper it on arrival (README section 2a) -- certified is not measured.
+barrel_od            = 76.2    # mm  CONFIRMED  McMaster 6045N87, 3" OD
+barrel_wall          = 3.05    # mm  CONFIRMED  McMaster 6045N87, 0.120" wall
+barrel_stock_len     = 914.4   # mm  CONFIRMED  3 ft as purchased.  The barrel is
+                               #     cut from this; the rest is stock.
 ptr_size             = 50.8    # mm  2" square PTR
 ptr_wall             = 3.05    # mm  cal-11
 
@@ -78,7 +88,7 @@ hex_pin_dia          = 8.0     # mm  cross pin, stub sleeve to drive shaft
 
 # --- PRINTED FITS -- tune these from out/fit_coupons.stl --------------------
 # ONE number governs every printed feature that has to fit real stock: the
-# auger bore on the shaft, the jig register faces on the tube and on the square
+# auger cross-pin holes, the jig register faces on the tube and on the square
 # post, the drill bushings on the bit, the cradle on the stator, the drill
 # saddle on the drill body, the gland follower in its box.  Print the coupon
 # ladder, find the step that fits, put that number here, reprint.  One edit
@@ -97,7 +107,17 @@ print_clearance_step = 0.10    # mm  rung spacing on the coupon ladder
 stl_tolerance        = 0.02    # mm chordal  -> 0.04 mm on a meshed diameter
 stl_angular          = 0.35    # rad
 
-# Two things that are NOT fits and are deliberately kept separate:
+# Three things that are NOT fits and are deliberately kept separate:
+auger_bore_clear     = 0.50    # mm DIAMETRAL, auger hub bore over the 35 mm
+                               # shaft.  A LOOSE SLIDE, not a fit, and not tuned
+                               # from coupon A: the 6 mm cross pin locates the
+                               # auger and carries the drive, so the bore's only
+                               # job is to go on and come off with a wet, gritty
+                               # shaft and five segments to line up.  Tying it to
+                               # print_clearance meant that dialling the jig
+                               # bushings in tight also shrank this bore, which
+                               # is the one place tight buys nothing.
+                               # The cross-pin hole stays on print_clearance.
 running_clearance    = 0.80    # mm DIAMETRAL, printed bore around a part that
                                # TURNS in it (gland follower and lantern ring
                                # on the rotating shaft sleeve).  A gap, not a
@@ -150,7 +170,8 @@ design_pressure      = 6.0     # bar  every wetted steel joint is designed here
 # it is a GUESS until the water test measures it (test_plan W-4).  On the
 # 1.5 kW motor it barely mattered.  On a 900 W drill it decides whether the
 # machine runs at all.  MEASURE IT FIRST.
-T_stator_friction    = 22.6    # N.m  dry-ish rubber drag, RPM-independent.
+T_stator_friction    = 22.6    # N.m  TBD  dry-ish rubber drag, RPM-independent.
+                               #      A GUESS until the water test -- test_plan W-4.
 T_gland              = 5.0     # N.m  packed gland, normal service preload
 T_gland_drill        = 2.5     # N.m  gland run deliberately loose (weeping) for
                                #      drill drive -- see README break-in
@@ -323,6 +344,7 @@ auger_len       = x_auger_front - x_auger_back
 
 auger_od        = barrel_id - 2 * auger_radial_clear
 auger_hub_od    = shaft_dia + 2 * auger_hub_wall
+auger_hub_bore  = shaft_dia + auger_bore_clear      # slide fit, see Block A
 _flight_area    = pi / 4 * (auger_od**2 - auger_hub_od**2)          # mm2
 # swept volume per rev = A * (pitch - flight_t) * fill.  Solve for pitch:
 _pitch_ideal    = (auger_overfeed * pump_disp_cc * 1000.0
@@ -397,6 +419,53 @@ nozzle          = 0.4
 # --- misc measured inputs for the printed jigs ------------------------------
 bucket_rim_od   = 295.0         # mm  TBD  5-gal bucket outside rim dia   MEASURE
 hardware_cloth  = 3.175         # mm  1/8" mesh -- this IS the <=3 mm sand screen
+
+
+def open_questions():
+    """Every input still carrying a TBD, read out of THIS FILE's own source so
+    the list cannot drift from the parameters it describes.
+
+    A TBD is not a missing feature: the geometry around it is right and the
+    number is a placeholder.  This exists so the design summary can say, on one
+    screen, exactly how much of the machine is still a guess -- and so that
+    confirming a part (the barrel, on the McMaster order) visibly SHORTENS the
+    list instead of leaving a stale sentence behind in a README.
+
+    Returns [(block, name, value, note), ...] in file order.
+    """
+    import os, re
+    src = open(os.path.abspath(__file__)).read().splitlines()
+    hdr = re.compile(r"^#\s*-{3,}\s*(.+?)\s*-{3,}\s*$")
+    asg = re.compile(r"^(\w+)\s*=\s*([^#]+?)\s*#\s*(.+)$")
+    cont = re.compile(r"^\s+#\s*(.*)$")
+    block, out, open_row = "(unfiled)", [], None
+    for ln in src:
+        h = hdr.match(ln)
+        if h:
+            block, open_row = h.group(1).rstrip(". "), None
+            continue
+        m = asg.match(ln)
+        if m:
+            open_row = None
+            if "TBD" not in m.group(3):
+                continue
+            unit, _, note = m.group(3).partition("TBD")
+            out.append([block, m.group(1), f"{m.group(2).strip()} {unit.strip()}".strip(),
+                        note.strip()])
+            open_row = out[-1]
+            continue
+        c = cont.match(ln)                  # wrapped comment under a TBD line
+        if c and open_row is not None:
+            open_row[3] += " " + c.group(1)
+        elif not ln.strip().startswith("#"):
+            open_row = None
+    for r in out:                           # tidy: the ACTION is not the note
+        n = " ".join(r[3].split()).strip(" .")
+        for tail in ("MEASURE", "VERIFY"):
+            if n.endswith(tail):
+                n = n[: -len(tail)].strip(" .")
+        r[3] = n
+    return [tuple(r) for r in out]
 
 
 def summary_lines():

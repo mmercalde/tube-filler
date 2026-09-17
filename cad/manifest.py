@@ -159,7 +159,7 @@ def render(rws):
     w("| parameter | now | governs |")
     w("|---|--:|---|")
     w(f"| `print_clearance` | {P.print_clearance:.2f} mm | DIAMETRAL clearance of a "
-      "printed feature over real stock: auger bore on the shaft, jig register faces "
+      "printed feature over real stock: auger cross-pin holes, jig register faces "
       "on the tube and on the square post, drill bushings on the bit, cradle on the "
       "stator, drill saddle on the drill body, gland follower in its box, PTR weld "
       "fixtures. Applied as half of it where the feature is a face or a radius. |")
@@ -169,12 +169,19 @@ def render(rws):
     w(f"| `running_clearance` | {P.running_clearance:.2f} mm | NOT a fit: the gap in "
       "a printed bore around something that turns in it (gland follower and lantern "
       "ring on the rotating shaft sleeve). Do not tune this from a coupon. |")
+    w(f"| `auger_bore_clear` | {P.auger_bore_clear:.2f} mm | NOT a fit either: the "
+      f"auger hub bore over the {P.shaft_dia:.0f} mm shaft, fixed at a loose slide. The "
+      f"{P.xpin_dia:.0f} mm cross pin locates the segment and carries the drive, so the "
+      "bore only has to go on and come off a wet, gritty shaft with five segments to "
+      "line up. Deliberately decoupled from `print_clearance`. |")
     w(f"\n`fit_coupons.stl` is a ladder of five rungs either side of each, "
       f"{P.print_clearance_step:.2f} mm apart, every rung embossed with its own value:\n")
     w("| tag | coupon | test it on | looking for |")
     w("|---|---|---|---|")
-    w(f"| `A` | auger hub bore + cross-pin hole | the real {P.shaft_dia:.0f} mm shaft "
-      f"and a {P.xpin_dia:.0f} mm pin | slides on by hand, no rock |")
+    w(f"| `A` | auger **cross-pin hole**, in a hub ring on the shaft | the real "
+      f"{P.shaft_dia:.0f} mm shaft and a {P.xpin_dia:.0f} mm pin | pin pushes through "
+      f"by hand, no slop. The ring's own bore steps too, but the auger's bore is a "
+      f"fixed {P.auger_bore_clear:.2f} mm slide and is not read from here. |")
     w(f"| `P` | post-jig corner channel | a real {P.post_side:.1f} square PTR corner "
       "| both faces touch, no rock, comes off by hand |")
     w(f"| `B` | template drill bushing | the real {P.tie_rod_hole:.0f} mm bit | spins "

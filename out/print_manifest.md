@@ -17,15 +17,16 @@ number, so one measurement retunes the whole project:
 
 | parameter | now | governs |
 |---|--:|---|
-| `print_clearance` | 0.25 mm | DIAMETRAL clearance of a printed feature over real stock: auger bore on the shaft, jig register faces on the tube and on the square post, drill bushings on the bit, cradle on the stator, drill saddle on the drill body, gland follower in its box, PTR weld fixtures. Applied as half of it where the feature is a face or a radius. |
+| `print_clearance` | 0.25 mm | DIAMETRAL clearance of a printed feature over real stock: auger cross-pin holes, jig register faces on the tube and on the square post, drill bushings on the bit, cradle on the stator, drill saddle on the drill body, gland follower in its box, PTR weld fixtures. Applied as half of it where the feature is a face or a radius. |
 | `print_interference` | 0.50 mm | DIAMETRAL *oversize* of a printed barb that must grip -- the NPT dust caps, and nothing else. Tuned in the opposite direction. |
 | `running_clearance` | 0.80 mm | NOT a fit: the gap in a printed bore around something that turns in it (gland follower and lantern ring on the rotating shaft sleeve). Do not tune this from a coupon. |
+| `auger_bore_clear` | 0.50 mm | NOT a fit either: the auger hub bore over the 35 mm shaft, fixed at a loose slide. The 6 mm cross pin locates the segment and carries the drive, so the bore only has to go on and come off a wet, gritty shaft with five segments to line up. Deliberately decoupled from `print_clearance`. |
 
 `fit_coupons.stl` is a ladder of five rungs either side of each, 0.10 mm apart, every rung embossed with its own value:
 
 | tag | coupon | test it on | looking for |
 |---|---|---|---|
-| `A` | auger hub bore + cross-pin hole | the real 35 mm shaft and a 6 mm pin | slides on by hand, no rock |
+| `A` | auger **cross-pin hole**, in a hub ring on the shaft | the real 35 mm shaft and a 6 mm pin | pin pushes through by hand, no slop. The ring's own bore steps too, but the auger's bore is a fixed 0.50 mm slide and is not read from here. |
 | `P` | post-jig corner channel | a real 76.2 square PTR corner | both faces touch, no rock, comes off by hand |
 | `B` | template drill bushing | the real 11 mm bit | spins freely, no perceptible wobble. **This is the tightest use in the project** -- if one rung is snug here and loose elsewhere, this is the rung that decides. |
 | `C` | dust-cap barb | a real 1" NPT half coupling | firm thumb to seat, stays put upside down |
@@ -66,9 +67,9 @@ On the machine, in contact with grout. Existing parts, unchanged by the drill co
 
 | STL | Qty | Mat | Walls | Infill | Orientation | Life | Solid cm3 | Est. g ea |
 |---|--:|---|--:|--:|---|---|--:|--:|
-| `auger_segment_p74.stl` | 2 | PETG | 4 | 100% | axis vertical, flat face down | consumable | 117 | 149 |
-| `auger_scavenger_p74_L74.stl` | 1 | PETG | 4 | 100% | axis vertical | consumable | 68 | 86 |
-| `auger_segment_p124_SPARE.stl` | 2 | PETG | 4 | 100% | axis vertical | spare | 111 | 141 |
+| `auger_segment_p74.stl` | 2 | PETG | 4 | 100% | axis vertical, flat face down | consumable | 115 | 146 |
+| `auger_scavenger_p74_L74.stl` | 1 | PETG | 4 | 100% | axis vertical | consumable | 67 | 85 |
+| `auger_segment_p124_SPARE.stl` | 2 | PETG | 4 | 100% | axis vertical | spare | 109 | 138 |
 | `gland_follower.stl` | 3 | PETG | 4 | 100% | shoulder down | consumable | 45 | 58 |
 | `lantern_ring.stl` | 3 | PETG | 4 | 100% | flat | consumable | 16 | 20 |
 | `stator_cradle.stl` | 1 | ASA | 4 | 40% | saddle up, flat base down | permanent | 854 | 473 |
