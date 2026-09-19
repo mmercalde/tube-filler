@@ -43,6 +43,67 @@ def check():
         want(b.size.X < P.barrel_id - 2 * (P.auger_radial_clear - 0.5),
              f"{n}: OD {b.size.X:.2f} fouls the barrel bore {P.barrel_id:.2f}")
 
+    # --- the cross-pin boss: the auger's one local restriction.
+    # calcs section 5b gates the feed on params.auger_core_profile().  That is
+    # an analytic profile; this measures the SOLID and refuses to let the two
+    # describe different screws.  It is also the check that would have caught
+    # the 56 x 22 cylinder, which left 61% of the open-hub free area and a
+    # local overfeed of 0.58 while section 5 happily reported 1.54 on average.
+    boss = printed._pin_boss()
+    bb = boss.bounding_box()
+    want(abs(bb.size.Y - P.auger_pin_boss) < 0.2,
+         f"pin boss swept OD {bb.size.Y:.2f} != auger_pin_boss {P.auger_pin_boss:.2f} "
+         f"-- the feed gate in calcs 5b is computed on that number")
+    want(bb.size.X <= P.auger_boss_minor + 0.2,
+         f"pin boss is {bb.size.X:.2f} across the no-load axis, over the "
+         f"{P.auger_boss_minor:.2f} lens minor -- it is a cylinder again, not a lens")
+    want(abs(bb.size.Z - P.auger_boss_len) < 0.2,
+         f"pin boss is {bb.size.Z:.2f} long, not auger_boss_len {P.auger_boss_len:.2f}")
+    for dz in (-14, -10, -6, 0, 6, 10, 14):
+        sl = boss & Pos(0, 0, P.auger_boss_len / 2 + dz) * Box(200, 200, 0.5)
+        got = sl.bounding_box().size.Y if sl is not None else 0.0
+        want(abs(got - P.auger_core_dia(dz)) < 0.4,
+             f"pin boss measures {got:.2f} at dz={dz:+.0f}, but "
+             f"params.auger_core_dia says {P.auger_core_dia(dz):.2f} -- the model "
+             f"and the acceptance check disagree about the screw")
+
+    # Free channel area in the barrel bore, at the pin plane against a plain-hub
+    # plane, measured on the finished part AS ASSEMBLED: the shaft fills the hub
+    # bore and the pin fills the pin hole, so both are blockage, not channel.
+    # Measuring the bare STL instead reads 77% on the old 56 mm boss -- it counts
+    # the shaft bore as free channel and very nearly waves the fault through.
+    bore_A = 3.141592653589793 / 4 * P.barrel_id ** 2
+    for n in ("auger_segment", "auger_scavenger"):
+        L = P.auger_seg_len if n == "auger_segment" else P.auger_tail_len
+        zp = L / 2
+        blocked = parts[n].fuse(
+            extrude(Circle(P.shaft_dia / 2), amount=L),
+            Rot(90, 0, 0) * Pos(0, zp, -P.barrel_id / 2)
+            * extrude(Circle(P.xpin_dia / 2), amount=P.barrel_id))
+
+        def _free(z, b=blocked):
+            # probe is a slice of the BARREL BORE, so nothing outside it counts
+            probe = Pos(0, 0, z - 0.5) * extrude(Circle(P.barrel_id / 2), amount=1.0)
+            sl = b & probe
+            return bore_A - (sl.volume if sl is not None else 0.0)
+        ratio = _free(zp) / _free(zp + P.auger_boss_len)
+        want(ratio >= P.auger_min_free_area,
+             f"{n}: free channel area at the pin plane is {ratio*100:.0f}% of the "
+             f"plain-hub section, under the {P.auger_min_free_area*100:.0f}% floor "
+             f"-- the boss is damming the feed")
+
+    # and the pin bearing wall actually exists, both sides.  The flight sector
+    # is 29 deg wide and cannot be at +y and -y at once, so material at both
+    # proves it is the boss and not a flight passing through.
+    seg = parts["auger_segment"]
+    rp = P.auger_pin_boss / 2 - 1.0
+    for sy in (1, -1):
+        pr = seg & Pos(0, sy * rp, P.auger_seg_len / 2 + 4) * Box(1.5, 1.5, 1.5)
+        want(pr is not None and pr.volume > 3.0,
+             f"no boss material at y={sy*rp:+.1f} -- the cross pin has nothing to "
+             f"bear on and calcs 5b's bearing check is describing plastic that "
+             f"is not there")
+
     b = parts["gland_follower"].bounding_box()
     want(b.size.X < P.gland_box_od,
          f"gland_follower shoulder {b.size.X:.1f} >= box OD {P.gland_box_od:.1f}: "

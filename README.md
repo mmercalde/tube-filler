@@ -241,12 +241,14 @@ Hopper → barrel → feed auger → adapter plate → stator → discharge head
   with a lantern ring fed by a grease nipple. Not a lip seal. Lip seals die in
   minutes on grout.
 - **Feed auger**: printed segments, cross-pinned to the shaft, sized to deliver
-  **1.33x** the stator's swallow rate. A PC pump must never starve.
+  more than the stator's swallow rate. A PC pump must never starve.
   Its OD, hub, pitch and segment length are *solved* in `params.py` from the
   barrel bore, the shaft diameter and the overfeed target — change the barrel
   and the auger follows. The pitch is snapped so a whole number of pitches
   exactly spans the barrel, which is what keeps every cross-pin hole on the
   same clock angle and every segment interchangeable.
+  **The overfeed is checked at the auger's worst station, not on its average**
+  — see §4.2. A screw that starves anywhere starves.
 - **Adapter plate**, welded to the barrel front. Washout face #1.
 - **Stator** hangs off the front, compressed lengthwise between the adapter
   plate and the discharge head by 4 x M10 tie rods. **No radial crushing.**
@@ -276,6 +278,46 @@ each end with the pin axes **perpendicular to one another** (a Cardan pair),
 and both pin bores are drilled 0.5 mm oversize so each joint is deliberately
 sloppy. Grease it and put a bicycle inner-tube boot over it. If you build the
 forks parallel, the joint binds and tears the rotor head off.
+
+### 4.2 The pin boss, and why an average is not a check
+
+Each auger segment is driven by a 6 mm cross pin, and the pin needs more
+plastic around it than the 4.5 mm hub wall. That local boss sits *in the feed
+channel*, and for three revisions it was a plain Ø56 × 22 cylinder because it
+was sized for the pin and nothing else looked at it.
+
+Ø56 in a Ø70.1 bore leaves **61%** of the plain-hub free area. `calcs` section
+5 was reporting an overfeed of 1.54× — correctly, for the plain hub — while the
+**local** overfeed at each of the three boss stations was **0.58×**. The screw
+metered above the stator's swallow everywhere except the three places it
+mattered, and starved there. The pump sees the pinch, not the mean.
+
+The boss is now Ø48 and shaped:
+
+- **Area.** Ø48 swept, which is capped by a hard gate — local overfeed ≥ 1.15×
+  at *every* z along the auger, walked at 0.25 mm in `calcs` section 5b. That
+  gate bites at Ø49.2. (Ø50 reads 1.09× and does not clear it.)
+- **Shape.** A faired lens rather than a cylinder, so it sheds instead of
+  damming: a double cone axially into a short land, and in plan an ellipse with
+  its major axis on the pin, blended flush into the hub at ±90°. Material ends
+  up only where the pin bears; the two quarters of the channel that carry no
+  load stay at full hub diameter. **The gates take no credit for the lens** —
+  they are computed on the circle it sweeps.
+
+The fairing is axial, which is the along-channel component of the helix.
+Skewing the lens to the true helix angle would make the boss asymmetric about
+the pin, and that is the one thing it may not be: both bearing patches have to
+match or the pin cocks and digs in on one side.
+
+Pin bearing at duty is 0.62 MPa against 40 MPa allowable for solid-printed
+PETG — a 65× margin. At a full jam it is 2.6×, and that is deliberate: a jam is
+bounded by the drill stalling, and the boss is the cheapest thing in the chain
+to give way. If it does, the segment spins free, the pump starves and you
+notice; the pin stays captive in the shaft and nothing loose enters the barrel.
+
+Worth knowing before anyone thickens it again: the two constraints have nearly
+converged. The feed gate caps the boss at Ø49.2, and carrying a full-burst jam
+at 3× would want about Ø49.8. **No boss diameter does both.**
 
 ---
 

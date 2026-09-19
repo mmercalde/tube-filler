@@ -27,7 +27,10 @@ def _reg():
     # ---------------- wetted / machine parts (unchanged rules) --------------
     a((f"auger_segment_p{P.auger_pitch:.0f}", printed.auger_segment, P.n_auger_full,
        V, "PETG", 4, 100, "axis vertical, flat face down",
-       "consumable", "flight self-supports: 97% layer overlap. No supports."))
+       "consumable", "flight self-supports: 97% layer overlap. No supports. "
+       f"Pin boss is a faired lens, {P.auger_pin_boss:.0f} swept x "
+       f"{P.auger_boss_len:.0f} -- print it as modelled, do not thicken it: "
+       "calcs 5b gates the feed on that diameter."))
     if P.auger_tail_len > 1:
         a((f"auger_scavenger_p{P.auger_pitch:.0f}_L{P.auger_tail_len:.0f}",
            lambda: printed.auger_segment(seg_len=P.auger_tail_len), 1,

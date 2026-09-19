@@ -108,6 +108,52 @@
   starves below fill factor                          0.49  print the 124 mm-pitch spares if it does
 
 ==============================================================================
+5b  THE CROSS-PIN BOSS -- the worst station, not the average
+==============================================================================
+  Section 5 is an average over the plain hub.  A screw meters on its WORST
+  station.  On this screw that is the boss around each drive pin, and these
+  numbers walk the real core profile end to end at 0.25 mm.
+
+  boss swept OD x axial                        48 x 30 mm  lens, 9 mm fairing each end
+  boss plan form                               48 x 44 mm  major axis on the pin; flush with the hub at 90 deg
+  local conveyed annulus at the boss             1219 mm2  vs 1508 open hub = 81%
+  MIN LOCAL OVERFEED, all z                        1.25 x  gate 1.15; worst at z = -6.0 mm  PASS
+  free area at the boss                               88%  of the plain-hub section; gate 75%  PASS
+  largest boss the gate allows                    49.2 mm  fitted at 48
+
+  WAS a plain cylinder at 56 x 22.  That is 61% of the open-hub free area and
+  a LOCAL overfeed of 0.58 -- the screw metered 1.54x the stator's swallow
+  everywhere except the three stations where it mattered, and starved there.
+  A screw that starves anywhere starves: the pump sees the pinch, not the mean.
+
+  Two changes, doing two different jobs:
+    AREA  -- swept OD 48, capped by the 1.15x gate above, which bites
+             at 49.2 mm.  (A 50 mm boss reads 1.09x and does NOT clear it.)
+    SHAPE -- a faired lens, so it sheds instead of damming: double-cone
+             axially into a short land, and in plan an ellipse with its major
+             axis on the pin, blended flush into the hub at +-90 deg.  The
+             two quarters of the channel that carry no pin load stay at full
+             hub diameter.  The gates above take NO credit for the lens --
+             they are computed on the circle it sweeps.
+
+  CROSS PIN -- 6 mm steel bearing on printed PETG, allowable 40 MPa:
+    wall each side of the shaft                   6.50 mm  projected bearing area 78 mm2, both walls
+    at duty (1.0 N.m)                            0.62 MPa  margin 65 x  (want >= 3)  PASS
+    if it JAMS (25 N.m burst)                    15.4 MPa  margin 2.6 x
+    steel pin, double shear at jam                 13 MPa  vs ~400 for a spring roll pin -- not the limit
+
+  The duty case is the gate and it passes by 65x.  The jam
+  case sits at 2.6x, and that is deliberate: a jam is bounded by
+  the drill stalling, and the boss is the cheapest thing in the chain to give
+  way.  If it does, the segment spins free on the shaft, the pump starves and
+  you notice -- the pin stays captive in the shaft and nothing loose enters
+  the barrel.  Reprint the segment; it is already a declared consumable.
+  Note the two constraints have nearly converged: the overfeed gate caps the
+  boss at 49.2 mm, and carrying a full-burst jam at 3x would want
+  about 49.8.  There is no boss diameter that does both, which is worth
+  knowing before anyone thickens it again.
+
+==============================================================================
 6  AXIAL THRUST -- rotor pushes the shaft REARWARD
 ==============================================================================
   thrust at duty (3.10 bar)                         608 N  
@@ -274,6 +320,9 @@ ACCEPTANCE CHECKS
   [PASS]  hose flow laminar
   [PASS]  one hopper load >= one post
   [PASS]  con-rod length >= 20 x ecc
+  [PASS]  auger local overfeed >= 1.15x at EVERY z
+  [PASS]  auger free area >= 75% of open hub at every z
+  [PASS]  auger pin bearing margin >= 3x at duty
   [PASS]  no dead annulus at the gland
   [SHORTFALL]  drive margin on continuous torque (0.53x, want 1.30x)
 

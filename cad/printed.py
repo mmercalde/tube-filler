@@ -4,20 +4,54 @@ from _common import *
 from math import pi
 
 
+def _pin_boss():
+    """The cross-pin boss: a LENS, not a cylinder, built at z = 0..boss_len.
+
+    The boss is the only local restriction in the feed channel, and the old
+    plain 56 x 22 cylinder left 61% of the open-hub free area -- enough to drop
+    the LOCAL overfeed to 0.58x and starve the pump at the one station that
+    metered least.  Two changes, and they do different jobs:
+
+      * the swept diameter comes down to auger_pin_boss, which is capped by the
+        local-overfeed gate in calcs section 5b.  That is what fixes the AREA.
+      * the shape is faired, which is what stops it DAMMING.  Axially it is a
+        double cone into a short land, so grout rides over it instead of
+        hitting a step; in plan it is an ellipse whose major axis lies on the
+        pin, blended flush into the hub at +-90 deg.  Material ends up only
+        where the pin actually bears, and the two quarters of the channel that
+        carry no load stay at full hub diameter.
+
+    The fairing is AXIAL -- the along-channel component of the helix.  Skewing
+    the lens to the true helix angle would make the boss asymmetric about the
+    pin, which is the one thing it may not be: both bearing patches have to be
+    the same, or the pin cocks and digs in on one side.
+    """
+    r_hub, r_bos = P.auger_hub_od / 2, P.auger_pin_boss / 2
+    fair, L = P.auger_boss_fair, P.auger_boss_len
+    land = L - 2 * fair
+    ogive = Pos(0, 0, fair) * Solid.make_cylinder(r_bos, land)
+    if fair > 0:                        # fair = 0 is a plain cylinder again
+        ogive = (Solid.make_cone(r_hub, r_bos, fair) + ogive
+                 + Pos(0, 0, fair + land) * Solid.make_cone(r_bos, r_hub, fair))
+    # Ellipse wants major on x, the pin lies on y -- build it, then turn it.
+    lens = extrude(Rot(0, 0, 90) * Ellipse(r_bos, P.auger_boss_minor / 2), amount=L)
+    return (ogive & lens).clean()
+
+
 def auger_segment(pitch=None, seg_len=None):
     """Keyed feed-auger segment.  Print axis-VERTICAL, no supports:
     consecutive layers overlap 97% of the flight, so the helicoid is
     self-supporting.  100% infill, 4 perimeters.
 
     Hub bore is shaft_dia + auger_bore_clear (a fixed 0.5 mm loose slide).
-    Cross-pin hole is xpin_dia + print_clearance (a tuned fit)."""
+    Cross-pin hole is xpin_dia + print_clearance (a tuned fit).
+    The cross-pin boss is a faired lens, not a cylinder -- see _pin_boss()."""
     pitch = pitch or P.auger_pitch
     seg_len = seg_len or P.auger_seg_len
     turns = seg_len / pitch
 
     hub = extrude(Circle(P.auger_hub_od / 2), amount=seg_len)
-    boss = Pos(0, 0, (seg_len - P.auger_boss_len) / 2) * extrude(
-        Circle(P.auger_pin_boss / 2), amount=P.auger_boss_len)
+    boss = Pos(0, 0, (seg_len - P.auger_boss_len) / 2) * _pin_boss()
 
     # Flight section = an ANGULAR WEDGE of an annulus, not a rectangle.
     # A wedge of half-angle a gives axial thickness (2a/2pi)*pitch at EVERY

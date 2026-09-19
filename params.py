@@ -128,6 +128,16 @@ print_interference   = 0.50    # mm DIAMETRAL, printed barb that must GRIP
 npt1_bore            = 26.6    # mm  1" NPT female thread minor -- what the
                                # dust cap plugs into.  Not a post dimension.
 
+# --- PRINTED MATERIAL ALLOWABLES -------------------------------------------
+# Only one printed part on this machine takes a point load: the auger hub, where
+# the steel cross pin bears on plastic.  Everything else printed is a guide, a
+# cover or a jig.  PETG printed solid (100% infill, 4 perimeters) yields around
+# 50 MPa in tension; the pin load is IN-PLANE for an axis-vertical print, not
+# across layers, so the full material strength is available.  40 MPa is that
+# with a haircut for print voids and for grout-temperature service.
+petg_bearing_mpa     = 40.0    # MPa allowable bearing stress, printed PETG
+pin_bearing_margin_min = 3.0   # x  on the DUTY torque, not on a jam
+
 # --- UPGRADE PATH -- documented, NOT fitted, NOT in the BOM total -----------
 # The motor + reducer bolt to the same hex stub via a bored coupling half.
 # calcs prints the upgrade line so the comparison stays honest.
@@ -245,8 +255,25 @@ auger_flight_t     = 6.0        # mm axial, constant root to tip
 auger_fill_eta     = 0.75       # flooded hopper, dense fluid
 auger_overfeed     = 1.35       # x the stator swallow rate.  A PC pump must
                                 # never starve; brief calls for ~1.3.
-auger_pin_boss  = 56.0          # local boss around the cross-pin
-auger_boss_len  = 22.0
+# --- cross-pin boss.  A LOCAL RESTRICTION IN THE FEED CHANNEL, so it is sized
+# by the channel and not by what looks sturdy.  It was a plain 56 x 22 cylinder:
+# that is 61% of the open-hub free area and drops the LOCAL overfeed to 0.58x,
+# i.e. the auger metered 1.54x the stator's swallow everywhere except at the one
+# station where it mattered, and starved there.  A screw that starves anywhere
+# starves, full stop -- the pump sees the pinch, not the average.
+auger_pin_boss  = 48.0          # mm  SWEPT envelope of the boss.  The cap comes
+                                #     from auger_min_local_overfeed below, which
+                                #     bites at 49.2 -- see calcs section 5b.
+auger_boss_len  = 30.0          # mm  overall, INCLUDING both fairings
+auger_boss_fair = 9.0           # mm  cone fairing at each end -> 12 mm land
+                                # (auger_boss_minor is set with auger_hub_od below:
+                                #  the lens is faired flush into the hub at
+                                #  +-90 deg from the pin, so it carries material
+                                #  only where the pin bears, and sheds instead
+                                #  of damming.)
+# Gates.  Both are checked in calcs and both gate the build.
+auger_min_local_overfeed = 1.15 # x  at EVERY z, not on the average
+auger_min_free_area      = 0.75 # of the plain-hub free section, swept envelope
 
 # --- barrel / layout.  x = 0 at the FRONT FACE of the adapter plate. --------
 barrel_len      = 600.0
@@ -345,6 +372,7 @@ auger_len       = x_auger_front - x_auger_back
 auger_od        = barrel_id - 2 * auger_radial_clear
 auger_hub_od    = shaft_dia + 2 * auger_hub_wall
 auger_hub_bore  = shaft_dia + auger_bore_clear      # slide fit, see Block A
+auger_boss_minor = auger_hub_od                    # lens minor axis == hub OD
 _flight_area    = pi / 4 * (auger_od**2 - auger_hub_od**2)          # mm2
 # swept volume per rev = A * (pitch - flight_t) * fill.  Solve for pitch:
 _pitch_ideal    = (auger_overfeed * pump_disp_cc * 1000.0
@@ -419,6 +447,34 @@ nozzle          = 0.4
 # --- misc measured inputs for the printed jigs ------------------------------
 bucket_rim_od   = 295.0         # mm  TBD  5-gal bucket outside rim dia   MEASURE
 hardware_cloth  = 3.175         # mm  1/8" mesh -- this IS the <=3 mm sand screen
+
+
+def auger_core_profile():
+    """The auger core's SWEPT blocking diameter along one segment, as
+    (z from the pin plane, diameter) breakpoints with linear ramps between.
+
+    Swept, not instantaneous: the boss is a lens, but it turns, so material
+    sitting in the channel sees the circle the lens sweeps.  The lens gets no
+    credit here -- it is shaped to shed, and the swept envelope is what is
+    allowed to throttle.  calcs and cad/verify.py both read this, so the model
+    and the acceptance check cannot describe different screws.
+    """
+    h = auger_boss_len / 2.0
+    land = h - auger_boss_fair
+    return [(-h, auger_hub_od), (-land, auger_pin_boss),
+            (land, auger_pin_boss), (h, auger_hub_od)]
+
+
+def auger_core_dia(dz):
+    """Swept blocking diameter at dz millimetres from the pin plane."""
+    h = auger_boss_len / 2.0
+    if abs(dz) >= h:
+        return auger_hub_od
+    prof = auger_core_profile()
+    for (z0, d0), (z1, d1) in zip(prof, prof[1:]):
+        if z0 <= dz <= z1:
+            return d0 if z1 == z0 else d0 + (d1 - d0) * (dz - z0) / (z1 - z0)
+    return auger_hub_od
 
 
 def open_questions():

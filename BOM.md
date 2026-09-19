@@ -146,7 +146,7 @@ orientation and consumable-vs-one-time-jig -- is generated into
 **`out/print_manifest.md`**.  It is not duplicated here, because a BOM and a
 manifest that disagree are worse than either alone.
 
-Summary: about 6.8 kg of filament across 53 parts, in three groups --
+Summary: about 6.7 kg of filament across 53 parts, in three groups --
 
 - **WETTED** augers, gland follower, lantern ring, stator cradle and strap;
 - **FAB JIGS** barrel and post drill saddles, 1:1 flange templates, PTR tack

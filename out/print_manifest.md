@@ -67,16 +67,16 @@ On the machine, in contact with grout. Existing parts, unchanged by the drill co
 
 | STL | Qty | Mat | Walls | Infill | Orientation | Life | Solid cm3 | Est. g ea |
 |---|--:|---|--:|--:|---|---|--:|--:|
-| `auger_segment_p74.stl` | 2 | PETG | 4 | 100% | axis vertical, flat face down | consumable | 115 | 146 |
-| `auger_scavenger_p74_L74.stl` | 1 | PETG | 4 | 100% | axis vertical | consumable | 67 | 85 |
-| `auger_segment_p124_SPARE.stl` | 2 | PETG | 4 | 100% | axis vertical | spare | 109 | 138 |
+| `auger_segment_p74.stl` | 2 | PETG | 4 | 100% | axis vertical, flat face down | consumable | 100 | 126 |
+| `auger_scavenger_p74_L74.stl` | 1 | PETG | 4 | 100% | axis vertical | consumable | 51 | 65 |
+| `auger_segment_p124_SPARE.stl` | 2 | PETG | 4 | 100% | axis vertical | spare | 92 | 117 |
 | `gland_follower.stl` | 3 | PETG | 4 | 100% | shoulder down | consumable | 45 | 58 |
 | `lantern_ring.stl` | 3 | PETG | 4 | 100% | flat | consumable | 16 | 20 |
 | `stator_cradle.stl` | 1 | ASA | 4 | 40% | saddle up, flat base down | permanent | 854 | 473 |
 | `stator_strap.stl` | 1 | ASA | 4 | 40% | arch up as modelled | permanent | 399 | 232 |
 | `joint_boot_clamp.stl` | 2 | PETG | 3 | 40% | flat | permanent | 8 | 9 |
 
-- **auger_segment_p74** -- flight self-supports: 97% layer overlap. No supports.
+- **auger_segment_p74** -- flight self-supports: 97% layer overlap. No supports. Pin boss is a faired lens, 48 swept x 30 -- print it as modelled, do not thicken it: calcs 5b gates the feed on that diameter.
 - **auger_scavenger_p74_L74** -- sweeps the annulus in front of the gland
 - **auger_segment_p124_SPARE** -- coarser pitch. Print only if the primary auger starves.
 - **gland_follower** -- compression only, fully supported in the bore
@@ -147,8 +147,8 @@ On the machine, not wetted.
 ## Totals
 
 - **53 printed parts** in 29 distinct models.
-- Estimated filament: **6.8 kg** (at the listed infills; 'Est. g' is density x perimeter shell volume plus infill fraction of the remainder -- a budgeting number, not a slicer).
-- PETG **4.1 kg**, ASA **2.7 kg**.  Buy 5 kg and 4 kg: the auger set alone is a consumable you will reprint, and one
+- Estimated filament: **6.7 kg** (at the listed infills; 'Est. g' is density x perimeter shell volume plus infill fraction of the remainder -- a budgeting number, not a slicer).
+- PETG **4.0 kg**, ASA **2.7 kg**.  Buy 5 kg and 4 kg: the auger set alone is a consumable you will reprint, and one
   of the sacrificial weld fixtures will get too close to an arc.
 - Of that, **2.5 kg is one-time fab jigs** that do not stay on the machine.  That is the price of
   drilling 24 post holes and a hopper slot right the first time.

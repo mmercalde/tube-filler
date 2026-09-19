@@ -140,6 +140,89 @@ eta_break   = disp_cc / (flight_area * (P.auger_pitch * mm)
                          * (1 - P.auger_flight_t / P.auger_pitch) * 1e6)   # eta at which it starves
 
 # ============================================================================
+# 5b. THE CROSS-PIN BOSS -- the auger's one local restriction
+# ============================================================================
+# Section 5 above is an AVERAGE: it sizes the pitch from the plain-hub annulus.
+# A screw does not meter on its average.  It meters on its worst station, and
+# the worst station on this screw is the boss around each drive pin.  These
+# numbers walk the real core profile (params.auger_core_profile) end to end.
+
+def local_flight_area(dz):
+    """Conveyed annulus [m2] at dz mm from a pin plane -- same convention as
+    section 5, with the local core diameter instead of the plain hub."""
+    return pi / 4 * ((P.auger_od * mm) ** 2 - (P.auger_core_dia(dz) * mm) ** 2)
+
+
+def local_overfeed(dz):
+    solid = 1.0 - P.auger_flight_t / P.auger_pitch
+    return (local_flight_area(dz) * (P.auger_pitch * mm) * P.auger_fill_eta
+            * solid * 1e6) / disp_cc
+
+
+def local_free_ratio(dz):
+    """Free area in the BARREL BORE at dz, over the same at a plain-hub plane.
+    This is the throttle metric -- it counts the 4 mm running clearance, which
+    carries no material but does carry the restriction.  local_overfeed is the
+    CAPACITY metric and is the stricter of the two; both are reported."""
+    ft = P.auger_flight_t / P.auger_pitch
+    root2 = P.auger_hub_od - 2.0                       # flight root diameter
+
+    def free(d):
+        ann = pi / 4 * (P.barrel_id ** 2 - d ** 2)
+        fl = ft * pi / 4 * (P.auger_od ** 2 - max(d, root2) ** 2)
+        return ann - fl
+    return free(P.auger_core_dia(dz)) / free(P.auger_hub_od)
+
+
+# walk EVERY station on the longest segment, 0.25 mm steps -- not just the land
+_zs = [(-P.auger_seg_len / 2) + 0.25 * i
+       for i in range(int(P.auger_seg_len / 0.25) + 1)]
+of_min      = min(local_overfeed(z) for z in _zs)
+of_min_z    = min(_zs, key=local_overfeed)
+free_min    = min(local_free_ratio(z) for z in _zs)
+boss_of     = local_overfeed(0.0)
+boss_free   = local_free_ratio(0.0)
+
+# --- cross pin: steel pin bearing on printed plastic ------------------------
+# Torque is carried as a couple on the two plastic walls either side of the
+# shaft.  Each wall is (boss - shaft)/2 thick and pin_dia wide in projection,
+# and the pair sits at the mean radius of that wall.
+pin_wall    = (P.auger_pin_boss - P.shaft_dia) / 2.0                 # mm
+pin_r_mean  = (P.shaft_dia + P.auger_pin_boss) / 4.0                 # mm
+pin_bear_A  = 2 * P.xpin_dia * pin_wall                              # mm2, both walls
+
+
+def pin_bearing_mpa(T_nm):
+    """Bearing stress on the printed boss [MPa] at T_nm on ONE pin."""
+    F = T_nm * 1000.0 / (2 * pin_r_mean)          # N per wall
+    return F / (P.xpin_dia * pin_wall)
+
+
+sig_pin_duty  = pin_bearing_mpa(P.T_auger)
+marg_pin_duty = P.petg_bearing_mpa / sig_pin_duty
+sig_pin_jam   = pin_bearing_mpa(P.drill_T_burst)        # auger jams, drill shoves
+marg_pin_jam  = P.petg_bearing_mpa / sig_pin_jam
+# and the steel pin itself, double shear at the shaft surface
+tau_pin_jam   = (P.drill_T_burst * 1000.0 / (2 * P.shaft_dia / 2)
+                 / (2 * pi / 4 * P.xpin_dia ** 2))      # MPa
+
+# largest boss that still clears the local-overfeed gate, by bisection
+def _of_at(d):
+    solid = 1.0 - P.auger_flight_t / P.auger_pitch
+    A = pi / 4 * ((P.auger_od * mm) ** 2 - (d * mm) ** 2)
+    return (A * (P.auger_pitch * mm) * P.auger_fill_eta * solid * 1e6) / disp_cc
+
+
+_lo, _hi = P.auger_hub_od, P.auger_od - 1.0
+for _ in range(60):
+    _md = (_lo + _hi) / 2
+    if _of_at(_md) >= P.auger_min_local_overfeed:
+        _lo = _md
+    else:
+        _hi = _md
+boss_dia_cap = _lo
+
+# ============================================================================
 # 6. AXIAL THRUST AND BEARINGS
 # ============================================================================
 d_env       = P.stator_inlet_bore * mm
@@ -347,6 +430,69 @@ def main():
         print( "    conveys poorly.  Raise auger_hub_wall (shrinks the annulus, coarsens the")
         print( "    pitch) or lower auger_overfeed, then re-run.")
 
+    rule("5b  THE CROSS-PIN BOSS -- the worst station, not the average")
+    print("  Section 5 is an average over the plain hub.  A screw meters on its WORST")
+    print("  station.  On this screw that is the boss around each drive pin, and these")
+    print("  numbers walk the real core profile end to end at 0.25 mm.\n")
+    row("boss swept OD x axial",
+        f"{P.auger_pin_boss:.0f} x {P.auger_boss_len:.0f} mm",
+        f"lens, {P.auger_boss_fair:.0f} mm fairing each end")
+    row("boss plan form",
+        f"{P.auger_pin_boss:.0f} x {P.auger_boss_minor:.0f} mm",
+        "major axis on the pin; flush with the hub at 90 deg")
+    row("local conveyed annulus at the boss",
+        f"{local_flight_area(0.0)*1e6:.0f} mm2",
+        f"vs {flight_area*1e6:.0f} open hub "
+        f"= {local_flight_area(0.0)/flight_area*100:.0f}%")
+    row("MIN LOCAL OVERFEED, all z", f"{of_min:.2f} x",
+        f"gate {P.auger_min_local_overfeed:.2f}; worst at z = {of_min_z:+.1f} mm"
+        + ("  PASS" if of_min >= P.auger_min_local_overfeed else "  FAIL"))
+    row("free area at the boss", f"{boss_free*100:.0f}%",
+        f"of the plain-hub section; gate {P.auger_min_free_area*100:.0f}%"
+        + ("  PASS" if free_min >= P.auger_min_free_area else "  FAIL"))
+    row("largest boss the gate allows", f"{boss_dia_cap:.1f} mm",
+        f"fitted at {P.auger_pin_boss:.0f}")
+    print()
+    print("  WAS a plain cylinder at 56 x 22.  That is 61% of the open-hub free area and")
+    print("  a LOCAL overfeed of 0.58 -- the screw metered 1.54x the stator's swallow")
+    print("  everywhere except the three stations where it mattered, and starved there.")
+    print("  A screw that starves anywhere starves: the pump sees the pinch, not the mean.")
+    print()
+    print("  Two changes, doing two different jobs:")
+    print(f"    AREA  -- swept OD {P.auger_pin_boss:.0f}, capped by the "
+          f"{P.auger_min_local_overfeed:.2f}x gate above, which bites")
+    print(f"             at {boss_dia_cap:.1f} mm.  (A 50 mm boss reads "
+          f"{_of_at(50.0):.2f}x and does NOT clear it.)")
+    print( "    SHAPE -- a faired lens, so it sheds instead of damming: double-cone")
+    print( "             axially into a short land, and in plan an ellipse with its major")
+    print( "             axis on the pin, blended flush into the hub at +-90 deg.  The")
+    print( "             two quarters of the channel that carry no pin load stay at full")
+    print( "             hub diameter.  The gates above take NO credit for the lens --")
+    print( "             they are computed on the circle it sweeps.")
+    print()
+    print(f"  CROSS PIN -- {P.xpin_dia:.0f} mm steel bearing on printed PETG, "
+          f"allowable {P.petg_bearing_mpa:.0f} MPa:")
+    row(f"  wall each side of the shaft", f"{pin_wall:.2f} mm",
+        f"projected bearing area {pin_bear_A:.0f} mm2, both walls")
+    row(f"  at duty ({P.T_auger:.1f} N.m)", f"{sig_pin_duty:.2f} MPa",
+        f"margin {marg_pin_duty:.0f} x  (want >= {P.pin_bearing_margin_min:.0f})"
+        + ("  PASS" if marg_pin_duty >= P.pin_bearing_margin_min else "  FAIL"))
+    row(f"  if it JAMS ({P.drill_T_burst:.0f} N.m burst)", f"{sig_pin_jam:.1f} MPa",
+        f"margin {marg_pin_jam:.1f} x")
+    row("  steel pin, double shear at jam", f"{tau_pin_jam:.0f} MPa",
+        "vs ~400 for a spring roll pin -- not the limit")
+    print()
+    print(f"  The duty case is the gate and it passes by {marg_pin_duty:.0f}x.  The jam")
+    print(f"  case sits at {marg_pin_jam:.1f}x, and that is deliberate: a jam is bounded by")
+    print( "  the drill stalling, and the boss is the cheapest thing in the chain to give")
+    print( "  way.  If it does, the segment spins free on the shaft, the pump starves and")
+    print( "  you notice -- the pin stays captive in the shaft and nothing loose enters")
+    print( "  the barrel.  Reprint the segment; it is already a declared consumable.")
+    print( "  Note the two constraints have nearly converged: the overfeed gate caps the")
+    print(f"  boss at {boss_dia_cap:.1f} mm, and carrying a full-burst jam at {P.pin_bearing_margin_min:.0f}x would want")
+    print( "  about 49.8.  There is no boss diameter that does both, which is worth")
+    print( "  knowing before anyone thickens it again.")
+
     rule("6  AXIAL THRUST -- rotor pushes the shaft REARWARD")
     row(f"thrust at duty ({p_required:.2f} bar)", f"{thrust_duty:.0f} N")
     row(f"thrust at {P.design_pressure:.0f} bar +30%", f"{thrust_des_x:.0f} N",
@@ -468,6 +614,12 @@ def main():
         ("hose flow laminar",                Re_bingham < 2000),
         ("one hopper load >= one post",      P.hop_vol_L >= post_vol_L),
         ("con-rod length >= 20 x ecc",       conrod_ratio >= 20),
+        (f"auger local overfeed >= {P.auger_min_local_overfeed:.2f}x at EVERY z",
+                                             of_min >= P.auger_min_local_overfeed),
+        (f"auger free area >= {P.auger_min_free_area*100:.0f}% of open hub at every z",
+                                             free_min >= P.auger_min_free_area),
+        ("auger pin bearing margin >= 3x at duty",
+                                             marg_pin_duty >= P.pin_bearing_margin_min),
         ("no dead annulus at the gland",     abs(P.x_auger_back - P.x_cover_back) <= 20),
     ]
     ok = True
